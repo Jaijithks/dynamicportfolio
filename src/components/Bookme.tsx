@@ -1,5 +1,5 @@
 'use client';
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 
 /* Wind streak canvas — fast light wisps */
 function WindCanvas() {
@@ -67,14 +67,94 @@ function WindCanvas() {
 }
 
 export default function Bookme() {
+  const [service, setService] = useState('');
+  const [expectedTime, setExpectedTime] = useState('');
+  const [meetingTime, setMeetingTime] = useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+
+  const SERVICES = [
+    'Portfolio Website',
+    'Full Stack Web Application',
+    'Frontend Development',
+    'Backend Development',
+    'UI Development',
+    'API Development',
+    'Bug Fixing',
+    'Consultation',
+    'Other',
+  ];
+
+  const TIMELINES = [
+    'ASAP',
+    'Within 1 Week',
+    'Within 2 Weeks',
+    'Within 1 Month',
+    'Flexible',
+  ];
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!service || !expectedTime || !meetingTime || !name || !email) {
+      setToast({ message: 'Please fill in all required fields.', type: 'error' });
+      return;
+    }
+
+    setLoading(true);
+    setToast(null);
+
+    try {
+      const response = await fetch('http://localhost:4500/api/book/bookme', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          service,
+          Expected_time: expectedTime,
+          meeting_time: meetingTime,
+          name,
+          email,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Server error');
+      }
+
+      setToast({ message: 'Booking Request Sent Successfully', type: 'success' });
+      // Reset form
+      setService('');
+      setExpectedTime('');
+      setMeetingTime('');
+      setName('');
+      setEmail('');
+    } catch (error) {
+      console.error(error);
+      setToast({ message: 'Something went wrong. Please try again.', type: 'error' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Auto-dismiss toast
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => setToast(null), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
+
   return (
     <section
       id="bookme"
-      className="relative min-h-screen flex flex-col justify-center overflow-hidden"
+      className="relative min-h-screen w-full overflow-hidden flex items-center justify-center py-24 z-0"
     >
       {/* ── Background Video ─────────────────────────── */}
       <video
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none -z-20"
         autoPlay
         muted
         loop
@@ -86,87 +166,171 @@ export default function Bookme() {
 
       {/* Dark wind overlay */}
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 -z-10"
         style={{
           background: 'linear-gradient(160deg, rgba(5,16,26,0.80) 0%, rgba(8,24,40,0.74) 40%, rgba(6,15,28,0.77) 70%, rgba(4,12,22,0.82) 100%)',
         }}
       />
 
       {/* Airy sky glows */}
-      <div className="absolute inset-0 pointer-events-none"
+      <div className="absolute inset-0 pointer-events-none -z-10"
         style={{ background: 'radial-gradient(ellipse 70% 50% at 70% 40%, rgba(100,180,255,0.10) 0%, transparent 70%)' }} />
-      <div className="absolute inset-0 pointer-events-none"
+      <div className="absolute inset-0 pointer-events-none -z-10"
         style={{ background: 'radial-gradient(ellipse 50% 40% at 20% 70%, rgba(60,140,220,0.07) 0%, transparent 60%)' }} />
 
       {/* Wind wisps canvas */}
-      <WindCanvas />
+      <div className="absolute inset-0 -z-10">
+        <WindCanvas />
+      </div>
 
       {/* Top line */}
-      <div className="absolute top-0 left-0 right-0 h-px"
+      <div className="absolute top-0 left-0 right-0 h-px -z-10"
         style={{ background: 'linear-gradient(90deg, transparent, rgba(120,180,255,0.35), transparent)' }} />
 
-      <div className="relative z-10 max-w-3xl mx-auto px-10 py-20 text-center">
-        <span className="text-xs font-bold tracking-[0.3em] uppercase mb-4 block"
-          style={{ color: 'rgba(140,200,255,0.6)' }}>
-          🌬️ Book Me
-        </span>
-        <h2
-          className="text-5xl sm:text-6xl font-black mb-6 leading-tight"
-          style={{
-            backgroundImage: 'linear-gradient(135deg, #e8f4ff 0%, #93c5fd 40%, #60a5fa 70%, #3b82f6 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-            filter: 'drop-shadow(0 0 20px rgba(100,160,255,0.35))',
-          }}
-        >
-          Let's Build<br />Something.
-        </h2>
-        <p className="text-base leading-relaxed mb-10" style={{ color: 'rgba(160,210,255,0.65)' }}>
-          Whether you have a project in mind, need a collaborator, or just want to chat about ideas —
-          I'm available for freelance work, consulting, and full-time opportunities.
-        </p>
+      <div className="relative z-10 w-full max-w-xl mx-auto px-6 md:px-10 flex flex-col items-center justify-center text-center">
+        {/* Booking Form Card — High Transparency Glassmorphism */}
+        <div className="relative bg-gradient-to-br from-slate-950/30 to-slate-900/20 backdrop-blur-md border border-white/10 rounded-2xl p-8 md:p-10 shadow-[0_12px_40px_rgba(0,0,0,0.6)] overflow-hidden">
+          {/* Accent border highlights matching the Wind theme */}
+          <div className="absolute top-0 left-1/4 right-1/4 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(147,197,253,0.5), transparent)' }} />
+          <div className="absolute bottom-0 left-1/4 right-1/4 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(96,165,250,0.5), transparent)' }} />
 
-        {/* Booking options */}
-        <div className="grid sm:grid-cols-3 gap-4 mb-10">
-          {[
-            { icon: '🗓️', title: '30-min Call',   desc: 'Quick intro or project scoping' },
-            { icon: '💼', title: 'Freelance',      desc: 'Short or long term contracts' },
-            { icon: '🤝', title: 'Full-time',      desc: 'Open to the right opportunity' },
-          ].map(({ icon, title, desc }) => (
-            <div
-              key={title}
-              className="rounded-xl p-5 text-left transition-all duration-300 hover:scale-[1.03]"
+          <div className="text-center mb-8">
+            <span className="text-xs font-bold tracking-[0.3em] uppercase text-sky-400 block mb-2">
+              BOOK A CONSULTATION
+            </span>
+            <h2
+              className="text-3xl font-black text-white mb-2 tracking-tight"
+              style={{ filter: 'drop-shadow(0 0 10px rgba(147,197,253,0.3))' }}
+            >
+              Ready to collaborate?
+            </h2>
+            <p className="text-xs text-blue-200/60 leading-relaxed">
+              Let&apos;s discuss your project and find the best solution.
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-5 text-left">
+            {/* Service Select */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-sky-300">Service *</label>
+              <div className="relative w-full">
+                <select
+                  required
+                  value={service}
+                  onChange={(e) => setService(e.target.value)}
+                  className="w-full px-5 py-3.5 rounded-xl border border-white/5 bg-slate-950/30 text-xs text-white focus:outline-none focus:border-sky-400/40 focus:bg-slate-950/50 transition duration-300 appearance-none cursor-pointer"
+                >
+                  <option value="" disabled>Select Service ▼</option>
+                  {SERVICES.map((s) => (
+                    <option key={s} value={s} className="bg-slate-950 text-white">
+                      {s}
+                    </option>
+                  ))}
+                </select>
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-sky-400/50 text-[10px]">
+                  ▼
+                </div>
+              </div>
+            </div>
+
+            {/* Expected Timeline */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-sky-300">Expected Timeline *</label>
+              <div className="relative w-full">
+                <select
+                  required
+                  value={expectedTime}
+                  onChange={(e) => setExpectedTime(e.target.value)}
+                  className="w-full px-5 py-3.5 rounded-xl border border-white/5 bg-slate-950/30 text-xs text-white focus:outline-none focus:border-sky-400/40 focus:bg-slate-950/50 transition duration-300 appearance-none cursor-pointer"
+                >
+                  <option value="" disabled>Select Timeline ▼</option>
+                  {TIMELINES.map((t) => (
+                    <option key={t} value={t} className="bg-slate-950 text-white">
+                      {t}
+                    </option>
+                  ))}
+                </select>
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-sky-400/50 text-[10px]">
+                  ▼
+                </div>
+              </div>
+            </div>
+
+            {/* Preferred Meeting Time */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-sky-300">Preferred Meeting Time *</label>
+              <input
+                type="datetime-local"
+                required
+                value={meetingTime}
+                onChange={(e) => setMeetingTime(e.target.value)}
+                className="w-full px-5 py-3.5 rounded-xl border border-white/5 bg-slate-950/30 text-xs text-white focus:outline-none focus:border-sky-400/40 focus:bg-slate-950/50 transition duration-300 cursor-pointer"
+              />
+            </div>
+
+            {/* Full Name */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-sky-300">Full Name *</label>
+              <input
+                type="text"
+                required
+                placeholder="Enter your name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full px-5 py-3.5 rounded-xl border border-white/5 bg-slate-950/30 text-xs text-white placeholder-white/20 focus:outline-none focus:border-sky-400/40 focus:bg-slate-950/50 transition duration-300"
+              />
+            </div>
+
+            {/* Email Address */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-sky-300">Email Address *</label>
+              <input
+                type="email"
+                required
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-5 py-3.5 rounded-xl border border-white/5 bg-slate-950/30 text-xs text-white placeholder-white/20 focus:outline-none focus:border-sky-400/40 focus:bg-slate-950/50 transition duration-300"
+              />
+            </div>
+
+            {/* Submit Button — Wind Sky theme */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-4 px-6 rounded-xl font-bold text-xs uppercase tracking-wider text-blue-100 transition-all duration-300 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2 cursor-pointer mt-6"
               style={{
-                background: 'rgba(10,30,60,0.5)',
-                border: '1px solid rgba(100,160,255,0.15)',
-                backdropFilter: 'blur(10px)',
-                boxShadow: '0 4px 24px rgba(0,0,0,0.4)',
+                background: 'linear-gradient(135deg, rgba(59,130,246,0.25), rgba(147,197,253,0.25))',
+                border: '1px solid rgba(147,197,253,0.35)',
+                boxShadow: '0 4px 20px rgba(147,197,253,0.15)',
               }}
             >
-              <span className="text-2xl block mb-2">{icon}</span>
-              <h3 className="font-semibold text-sm mb-1" style={{ color: '#93c5fd' }}>{title}</h3>
-              <p className="text-xs" style={{ color: 'rgba(140,190,240,0.55)' }}>{desc}</p>
-            </div>
-          ))}
+              {loading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span>Submitting...</span>
+                </>
+              ) : (
+                <span>Book Consultation</span>
+              )}
+            </button>
+          </form>
         </div>
-
-        {/* CTA button */}
-        <a
-          href="mailto:jaijithks@email.com"
-          className="inline-flex items-center gap-3 px-10 py-4 rounded-full font-semibold text-base
-                     transition-all duration-300 hover:scale-105"
-          style={{
-            background: 'linear-gradient(135deg, rgba(59,130,246,0.3), rgba(99,102,241,0.3))',
-            border: '1px solid rgba(100,160,255,0.4)',
-            boxShadow: '0 0 30px rgba(80,130,255,0.25), inset 0 1px 0 rgba(255,255,255,0.08)',
-            color: '#bfdbfe',
-            backdropFilter: 'blur(8px)',
-          }}
-        >
-          <span>📩</span> Get In Touch
-        </a>
       </div>
+
+      {/* Premium Toast Notification */}
+      {toast && (
+        <div className="fixed bottom-10 right-10 z-[150] flex items-center gap-3 px-5 py-4 rounded-xl border border-white/10 bg-slate-950/90 backdrop-blur-xl text-xs shadow-[0_10px_40px_rgba(0,0,0,0.6)] animate-in fade-in slide-in-from-bottom-5 duration-300">
+          <div
+            className={`w-2 h-2 rounded-full ${
+              toast.type === 'success'
+                ? 'bg-green-400 shadow-[0_0_10px_rgba(74,222,128,0.5)]'
+                : 'bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]'
+            }`}
+          />
+          <span className="font-medium text-white">{toast.message}</span>
+        </div>
+      )}
     </section>
   );
 }

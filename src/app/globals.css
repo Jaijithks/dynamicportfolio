@@ -143,3 +143,32 @@
 
 /* ─── Smooth scroll snap (optional progressive enhancement) ────── */
 /* sections manage their own border/divider lines */
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-glow::-webkit-scrollbar {
+  width: 6px;
+}
+.scrollbar-glow::-webkit-scrollbar-track {
+  background: rgba(0, 20, 40, 0.4);
+  border-radius: 999px;
+}
+.scrollbar-glow::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #38bdf8, #0ea5e9);
+  border-radius: 999px;
+  box-shadow: 0 0 8px rgba(14, 165, 233, 0.6);
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+.animate-float-slow {
+  animation: float-slow 5s ease-in-out infinite;
+}
