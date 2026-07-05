@@ -15,12 +15,12 @@ export default function Hero() {
     return (
         <section
             id="hero"
-            className="relative min-h-screen w-full overflow-hidden flex flex-col"
+            className="relative min-h-screen w-full overflow-hidden flex flex-col items-center justify-center z-0"
         >
             {/* ── Background Video ───────────────────── */}
             <video
                 ref={videoRef}
-                className="absolute inset-0 w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none -z-20"
                 autoPlay
                 muted
                 loop
@@ -33,7 +33,7 @@ export default function Hero() {
 
             {/* ── Dark fire overlay ──────────────────── */}
             <div
-                className="absolute inset-0"
+                className="absolute inset-0 -z-10"
                 style={{
                     background:
                         'linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(10,3,0,0.30) 50%, rgba(0,0,0,0.75) 100%)',
@@ -42,7 +42,7 @@ export default function Hero() {
 
             {/* ── Ember vignette ────────────────────── */}
             <div
-                className="absolute inset-0 pointer-events-none"
+                className="absolute inset-0 pointer-events-none -z-10"
                 style={{
                     background:
                         'radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.65) 100%)',
@@ -53,7 +53,7 @@ export default function Hero() {
             <div className="relative z-10 h-[68px]" />
 
             {/* ── Hero Content ──────────────────────── */}
-            <div className="relative z-10 flex flex-1 flex-col items-center justify-center text-center px-6 gap-6">
+            <div className="relative z-10 w-full max-w-6xl mx-auto px-6 md:px-10 flex flex-col items-center justify-center text-center gap-6 flex-1">
                 {/* Name */}
                 <h1
                     className="text-6xl sm:text-8xl font-black tracking-tight leading-none"
