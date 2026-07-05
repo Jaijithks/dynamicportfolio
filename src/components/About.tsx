@@ -1,5 +1,6 @@
-import EarthParticles from './EarthParticles';
 import AboutClient from './AboutClient';
+import EarthParticlesClient from './EarthParticlesClient';
+
 
 type About = {
   headline: string;
@@ -84,7 +85,7 @@ export default async function About() {
 
       {/* Floating particles (Client Component) */}
       <div className="absolute inset-0 -z-10">
-        <EarthParticles />
+        <EarthParticlesClient />
       </div>
 
       {/* Horizontal divider line at top */}

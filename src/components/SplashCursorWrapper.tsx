@@ -92,29 +92,20 @@ export default function SplashCursorWrapper() {
   const [activeSection, setActiveSection] = useState<string>('hero');
 
   useEffect(() => {
-    const ratioMap: Record<string, number> = {};
+    const SLOT = 2; // matches page layout: each section slot = 2vh
+    const handleScroll = () => {
+      const vh = window.innerHeight;
+      const idx = Math.min(
+        Math.floor(window.scrollY / (SLOT * vh)),
+        SECTIONS.length - 1
+      );
+      setActiveSection(SECTIONS[idx]);
+    };
 
-    const obs = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          ratioMap[e.target.id] = e.intersectionRatio;
-        });
-        // Pick the section with the highest visible ratio
-        const best = Object.entries(ratioMap).reduce(
-          (acc, [id, ratio]) => (ratio > acc.ratio ? { id, ratio } : acc),
-          { id: 'hero', ratio: 0 }
-        );
-        if (best.ratio > 0) setActiveSection(best.id);
-      },
-      { threshold: [0.1, 0.3, 0.5, 0.7] }
-    );
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
 
-    SECTIONS.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) obs.observe(el);
-    });
-
-    return () => obs.disconnect();
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const theme = SECTION_THEMES[activeSection] ?? SECTION_THEMES.hero;

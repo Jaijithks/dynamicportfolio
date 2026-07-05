@@ -1,17 +1,50 @@
 import { Suspense } from "react";
 import Hero from "@/components/Hero";
+import SectionTransitionWrapper from "@/components/SectionTransitionWrapper";
 import About from "@/components/About";
-import Skills from "@/components/Skills";
 import Projects from "@/components/Projects";
-import Contact from "@/components/Contact";
+import Skills from "@/components/Skills";
 import Bookme from "@/components/Bookme";
+import Contact from "@/components/Contact";
 
 export default function Home() {
   return (
     <main>
+      {/* ── Hero ──────────────────────────────────── */}
       <Hero />
+
+      {/* ── Hero → About ──────────────────────────── */}
+      <SectionTransitionWrapper
+        sequencePath="/sequence herotoabout"
+        triggerSectionId="hero"
+        loadDelay={0}
+      />
+      {/* Spacer: bridges the 2vh pin duration to About */}
+      <div style={{ height: '100vh' }} aria-hidden="true" />
+
+      {/* ── About ─────────────────────────────────── */}
       <About />
+
+      {/* ── About → Projects ──────────────────────── */}
+      <SectionTransitionWrapper
+        sequencePath="/sequence abouttoproject"
+        triggerSectionId="about"
+        loadDelay={500}
+      />
+      <div style={{ height: '100vh' }} aria-hidden="true" />
+
+      {/* ── Projects ──────────────────────────────── */}
       <Projects />
+
+      {/* ── Projects → Skills ─────────────────────── */}
+      <SectionTransitionWrapper
+        sequencePath="/sequence projecttoskills"
+        triggerSectionId="projects"
+        loadDelay={1000}
+      />
+      <div style={{ height: '100vh' }} aria-hidden="true" />
+
+      {/* ── Skills ────────────────────────────────── */}
       <Suspense
         fallback={
           <div
@@ -30,8 +63,29 @@ export default function Home() {
       >
         <Skills />
       </Suspense>
+
+      {/* ── Skills → Book Me ──────────────────────── */}
+      <SectionTransitionWrapper
+        sequencePath="/sequence skillstobookme"
+        triggerSectionId="skills"
+        loadDelay={1500}
+      />
+      <div style={{ height: '100vh' }} aria-hidden="true" />
+
+      {/* ── Book Me ───────────────────────────────── */}
       <Bookme />
+
+      {/* ── Book Me → Contact ─────────────────────── */}
+      <SectionTransitionWrapper
+        sequencePath="/sequence bookmetocontact"
+        triggerSectionId="bookme"
+        loadDelay={2000}
+      />
+      <div style={{ height: '100vh' }} aria-hidden="true" />
+
+      {/* ── Contact ───────────────────────────────── */}
       <Contact />
     </main>
   );
 }
+
