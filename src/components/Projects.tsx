@@ -1,5 +1,7 @@
-import WaveCanvas from './WaveCanvas';
 import ProjectCard from './ProjectCard';
+import WaveCanvasClient from './WaveCanvasClient';
+
+
 
 type Project = {
   _id: string;
@@ -67,7 +69,7 @@ export default async function Projects() {
 
       {/* Animated wave canvas (Client Component) */}
       <div className="absolute inset-0 -z-10">
-        <WaveCanvas />
+        <WaveCanvasClient />
       </div>
 
       {/* Top line */}

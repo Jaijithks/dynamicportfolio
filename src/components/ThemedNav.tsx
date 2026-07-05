@@ -136,37 +136,42 @@ export default function ThemedNav() {
   const [activeIdx, setActiveIdx] = useState(0);
   const [section, setSection] = useState('hero');
 
-  /* Detect active section */
+  /* ── Section detection via scroll-position math ──────────────────────
+     With end:'+=200%' and 100vh spacers, each section slot = 2vh:
+       hero     → scrollY in [0,      2vh)
+       about    → scrollY in [2vh,    4vh)
+       projects → scrollY in [4vh,    6vh)
+       skills   → scrollY in [6vh,    8vh)
+       bookme   → scrollY in [8vh,   10vh)
+       contact  → scrollY >= 10vh
+  ───────────────────────────────────────────────────────────────────── */
+  const SLOT = 2; // each section slot = 2 × viewport height
+
   useEffect(() => {
-    const ratioMap: Record<string, number> = {};
+    const handleScroll = () => {
+      const vh = window.innerHeight;
+      const idx = Math.min(
+        Math.floor(window.scrollY / (SLOT * vh)),
+        SECTION_IDS.length - 1
+      );
+      setSection(SECTION_IDS[idx]);
+      setActiveIdx(idx);
+    };
 
-    const obs = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => { ratioMap[e.target.id] = e.intersectionRatio; });
-        const best = Object.entries(ratioMap).reduce(
-          (acc, [id, r]) => (r > acc.r ? { id, r } : acc),
-          { id: 'hero', r: 0 }
-        );
-        if (best.r > 0) {
-          setSection(best.id);
-          setActiveIdx(SECTION_IDS.indexOf(best.id));
-        }
-      },
-      { threshold: [0.1, 0.3, 0.5, 0.7] }
-    );
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
 
-    SECTION_IDS.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) obs.observe(el);
-    });
-
-    return () => obs.disconnect();
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const t = THEMES[section] ?? THEMES.hero;
 
+  /* ── Nav scrollTo: each section lives at (index × SLOT × vh) ──────── */
   const scrollTo = (href: string) => {
-    document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
+    const id = href.replace('#', '');
+    const idx = SECTION_IDS.indexOf(id);
+    if (idx < 0) return;
+    window.scrollTo({ top: idx * SLOT * window.innerHeight, behavior: 'smooth' });
   };
 
   return (
