@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import dynamic from 'next/dynamic';
-import { Mail, Phone, Copy, Check } from 'lucide-react';
+import { Mail, Phone, Copy, Check, Download } from 'lucide-react';
 import { FaLinkedin as Linkedin, FaGithub as Github } from 'react-icons/fa';
 
 const StarField = dynamic(() => import('./StarField'), { ssr: false });
@@ -15,16 +15,49 @@ type Contact = {
   linkedin: string;
 };
 
+type Resume = {
+  resume_url: string;
+};
+
 /* ── Component ──────────────────────────────────────────────────────────── */
 export default function Contact() {
   const [contact, setContact] = useState<Contact | null>(null);
+  const [resume, setResume] = useState<Resume | null>(null);
+  const [loadingResume, setLoadingResume] = useState(true);
   const [copied, setCopied] = useState(false);
 
+  const resumeRef = useRef<HTMLDivElement>(null);
+  const [isResumeVisible, setIsResumeVisible] = useState(false);
+
   useEffect(() => {
-    fetch('http://localhost:4500/api/book/viewcontact', { cache: 'no-store' })
-      .then((r) => r.json())
-      .then((data) => setContact(data.currentContact))
-      .catch(console.error);
+    if (!resumeRef.current) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setIsResumeVisible(true);
+        observer.disconnect();
+      }
+    }, { threshold: 0.1 });
+    observer.observe(resumeRef.current);
+    return () => observer.disconnect();
+  }, [resume, loadingResume]);
+
+  useEffect(() => {
+    Promise.all([
+      fetch('http://localhost:4500/api/book/viewcontact', { cache: 'no-store' })
+        .then((r) => r.json())
+        .then((data) => setContact(data.currentContact))
+        .catch(console.error),
+      fetch('http://localhost:4500/api/profile/resume', { cache: 'no-store' })
+        .then((r) => r.json())
+        .then((data) => {
+          setResume(data.data.resume);
+          setLoadingResume(false);
+        })
+        .catch((err) => {
+          console.error(err);
+          setLoadingResume(false);
+        })
+    ]);
   }, []);
 
   const handleCopy = () => {
@@ -125,7 +158,7 @@ export default function Contact() {
             <h3 className="text-xs font-bold tracking-[0.2em] uppercase mb-3 text-purple-400">
               PROFESSIONAL EMAIL
             </h3>
-            
+
             <p className="text-xs text-gray-400 leading-relaxed mb-8 flex-1 max-w-[200px]">
               For project discussions, collaborations, and inquiries.
             </p>
@@ -159,7 +192,7 @@ export default function Contact() {
             <h3 className="text-xs font-bold tracking-[0.2em] uppercase mb-3 text-blue-400">
               DIRECT LINE
             </h3>
-            
+
             <p className="text-xs text-gray-400 leading-relaxed mb-8 flex-1 max-w-[200px]">
               Available for professional conversations and consultations.
             </p>
@@ -189,7 +222,7 @@ export default function Contact() {
             <h3 className="text-xs font-bold tracking-[0.2em] uppercase mb-3 text-purple-400">
               LINKEDIN
             </h3>
-            
+
             <p className="text-xs text-gray-400 leading-relaxed mb-8 flex-1 max-w-[200px]">
               Connect with me on LinkedIn to view my journey, experience, and professional updates.
             </p>
@@ -221,7 +254,7 @@ export default function Contact() {
             <h3 className="text-xs font-bold tracking-[0.2em] uppercase mb-3 text-blue-400">
               GITHUB
             </h3>
-            
+
             <p className="text-xs text-gray-400 leading-relaxed mb-8 flex-1 max-w-[200px]">
               Explore my repositories, open-source projects, and contributions.
             </p>
@@ -249,14 +282,54 @@ export default function Contact() {
             <span>Technical Collaborations</span>
           </div>
         </div>
+
+        {/* New Resume Section */}
+        {(loadingResume || (resume && resume.resume_url)) && (
+          <div
+            ref={resumeRef}
+            className={`w-full max-w-xl mx-auto mt-12 rounded-2xl p-6 md:p-8 border border-purple-500/10 bg-slate-950/20 backdrop-blur-md transition-all duration-1000 ease-out animate-soft-pulse relative overflow-hidden group/card ${isResumeVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-[0.98]'
+              }`}
+          >
+            {/* Top border glowing highlight */}
+            <div className="absolute top-0 left-1/4 right-1/4 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(168,85,247,0.45), transparent)' }} />
+
+            <p className="text-sm md:text-base leading-relaxed text-purple-200/80 mb-6 max-w-md mx-auto">
+              Interested in learning more about my experience and technical background?
+            </p>
+
+            <div className="flex justify-center">
+              {loadingResume ? (
+                <button
+                  disabled
+                  className="w-[250px] py-3.5 px-6 rounded-full font-bold text-xs uppercase tracking-wider text-purple-300/50 bg-slate-900 border border-purple-500/10 flex items-center justify-center gap-2 cursor-not-allowed"
+                >
+                  <div className="w-3.5 h-3.5 border-2 border-purple-500/30 border-t-purple-500 rounded-full animate-spin" />
+                  <span>Loading Resume...</span>
+                </button>
+              ) : (
+                <a
+                  href={resume?.resume_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  download
+                  className="w-[250px] py-3.5 px-6 rounded-full font-bold text-xs uppercase tracking-wider text-white transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] hover:shadow-[0_0_25px_rgba(168,85,247,0.3),_0_0_15px_rgba(59,130,246,0.2)] flex items-center justify-center gap-2 cursor-pointer group/btn animate-breathe"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(168,85,247,0.4), rgba(59,130,246,0.4))',
+                    border: '1px solid rgba(168,85,247,0.4)',
+                  }}
+                >
+                  <Download className="w-3.5 h-3.5 text-purple-300 transition-transform group-hover/btn:translate-x-0.5" />
+                  <span>Download Resume</span>
+                  <span className="text-[10px] text-purple-300 font-light ml-0.5">↓</span>
+                </a>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Footer */}
-      <div className="relative z-10 text-center pb-8 mt-16">
-        <p className="text-xs" style={{ color: 'rgba(180,140,255,0.3)' }}>
-          © 2025 Jaijith KS — Built from scratch ✦
-        </p>
-      </div>
+
     </section>
   );
 }
+
