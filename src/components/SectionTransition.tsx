@@ -35,9 +35,21 @@ export default function SectionTransition({
   const [loadProgress, setLoadProgress] = useState(0);
   const [loaded, setLoaded] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  /* Detect mobile viewport size */
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   /* -- 1. Preload image sequence frames ------------------------------- */
   useEffect(() => {
+    if (isMobile) return;
     let timer: ReturnType<typeof setTimeout>;
     let cancelled = false;
 
@@ -82,11 +94,11 @@ export default function SectionTransition({
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [sequencePath, totalFrames, loadDelay]);
+  }, [sequencePath, totalFrames, loadDelay, isMobile]);
 
   /* -- 2. Show loader if user reaches transition before images load ---- */
   useEffect(() => {
-    if (loaded) return;
+    if (isMobile || loaded) return;
     const handleScroll = () => {
       const trigger = document.getElementById(triggerSectionId);
       if (!trigger) return;
@@ -98,10 +110,11 @@ export default function SectionTransition({
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [loaded, triggerSectionId, scrollThreshold]);
+  }, [loaded, triggerSectionId, scrollThreshold, isMobile]);
 
   /* -- 3. Block scroll while loader is active ------------------------- */
   useEffect(() => {
+    if (isMobile) return;
     const isLoaderActive = showLoader && !loaded;
     if (isLoaderActive) {
       document.body.style.overflow = 'hidden';
@@ -109,11 +122,11 @@ export default function SectionTransition({
       document.body.style.overflow = '';
     }
     return () => { document.body.style.overflow = ''; };
-  }, [showLoader, loaded]);
+  }, [showLoader, loaded, isMobile]);
 
   /* -- 4. GSAP ScrollTrigger + canvas rendering ----------------------- */
   useEffect(() => {
-    if (!loaded || images.length === 0) return;
+    if (isMobile || !loaded || images.length === 0) return;
 
     gsap.registerPlugin(ScrollTrigger);
 
@@ -217,6 +230,8 @@ export default function SectionTransition({
       st.kill();
     };
   }, [loaded, images, triggerSectionId, scrollThreshold, totalFrames]);
+
+  if (isMobile) return null;
 
   return (
     <>
