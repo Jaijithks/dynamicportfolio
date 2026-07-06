@@ -7,7 +7,7 @@ type Skill = {
 };
 
 async function getSkills(): Promise<Skill[]> {
-    const response = await fetch("http://localhost:4500/api/profile/skill", {
+    const response = await fetch("https://my-api-6pmy.onrender.com/api/profile/skill", {
         cache: "no-store",
     });
 
@@ -79,7 +79,7 @@ export default async function Skills() {
                 </h2>
                 {/* Glowing line underneath heading */}
                 <div className="w-20 h-[3px] bg-gradient-to-r from-purple-500 via-purple-400 to-transparent rounded-full shadow-[0_0_10px_rgba(147,51,234,0.5)] mt-4 mb-6" />
-                
+
                 <p className="mb-12 max-w-lg text-sm md:text-base leading-relaxed" style={{ color: 'rgba(180,120,255,0.60)' }}>
                     The tools and technologies I use to bring ideas to life, crackling with precision.
                 </p>

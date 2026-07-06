@@ -24,7 +24,7 @@ function WindCanvas() {
     let wisps: Wisp[] = [];
 
     const resize = () => {
-      w = canvas.width  = canvas.offsetWidth;
+      w = canvas.width = canvas.offsetWidth;
       h = canvas.height = canvas.offsetHeight;
       wisps = Array.from({ length: 45 }, () => spawnWisp(true));
     };
@@ -106,7 +106,7 @@ export default function Bookme() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:4500/api/book/bookme', {
+      const response = await fetch('https://my-api-6pmy.onrender.com/api/book/bookme', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
