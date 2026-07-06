@@ -84,15 +84,18 @@ export default async function Skills() {
                     The tools and technologies I use to bring ideas to life, crackling with precision.
                 </p>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {skills.map((skill) => (
-                        <SkillCard
-                            key={skill.title}
-                            title={skill.title}
-                            description={skill.description}
-                            skills={skill.skills}
-                        />
-                    ))}
+                {/* Scrollable Skills Container */}
+                <div className="w-full max-h-[55vh] overflow-y-auto pr-4 pb-8 scrollbar-glow">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {skills.map((skill) => (
+                            <SkillCard
+                                key={skill.title}
+                                title={skill.title}
+                                description={skill.description}
+                                skills={skill.skills}
+                            />
+                        ))}
+                    </div>
                 </div>
             </div>
 

@@ -86,10 +86,7 @@ export default function SectionTransition({
 
   /* -- 2. Show loader if user reaches transition before images load ---- */
   useEffect(() => {
-    if (loaded) {
-      setShowLoader(false);
-      return;
-    }
+    if (loaded) return;
     const handleScroll = () => {
       const trigger = document.getElementById(triggerSectionId);
       if (!trigger) return;
@@ -105,13 +102,14 @@ export default function SectionTransition({
 
   /* -- 3. Block scroll while loader is active ------------------------- */
   useEffect(() => {
-    if (showLoader) {
+    const isLoaderActive = showLoader && !loaded;
+    if (isLoaderActive) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
     }
     return () => { document.body.style.overflow = ''; };
-  }, [showLoader]);
+  }, [showLoader, loaded]);
 
   /* -- 4. GSAP ScrollTrigger + canvas rendering ----------------------- */
   useEffect(() => {
@@ -222,7 +220,7 @@ export default function SectionTransition({
 
   return (
     <>
-      {showLoader && (
+      {showLoader && !loaded && (
         <div className="fixed inset-0 w-screen h-screen flex flex-col items-center justify-center bg-black/85 backdrop-blur-md z-[10000]">
           <div className="w-12 h-12 border-2 border-purple-500/25 border-t-purple-500 rounded-full animate-spin mb-4" />
           <p className="text-xs uppercase tracking-[0.25em] text-purple-300/70 font-bold animate-pulse">
