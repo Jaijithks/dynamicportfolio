@@ -323,47 +323,62 @@ export default function ThemedNav() {
         {/* Separator line */}
         <div className="w-px h-6 bg-white/10" />
 
-        {/* Lock button */}
-        <button
-          onClick={toggleLock}
-          title={isLocked ? 'Unlock Navigation & Transitions' : 'Lock Navigation & Transitions'}
-          className={`group relative flex items-center justify-center w-10 h-10 rounded-full transition-all duration-500 cursor-pointer z-10 ${
-            isLocked ? 'animate-pulse' : ''
-          }`}
-          style={{
-            border: isLocked
-              ? '1px solid rgba(239, 68, 68, 0.8)'
-              : '1px solid rgba(16, 185, 129, 0.4)',
-            background: isLocked
-              ? 'rgba(239, 68, 68, 0.25)'
-              : 'rgba(16, 185, 129, 0.1)',
-            boxShadow: isLocked
-              ? '0 0 15px rgba(239, 68, 68, 0.6), inset 0 0 8px rgba(239, 68, 68, 0.2)'
-              : '0 0 8px rgba(16, 185, 129, 0.2)',
-            color: isLocked ? '#f87171' : '#34d399',
-          }}
-        >
-          {isLocked ? <IoLockClosedOutline size={18} /> : <IoLockOpenOutline size={18} />}
-
-          {/* Pulsating outer ring when locked */}
-          {isLocked && (
-            <span className="absolute inset-0 rounded-full border border-red-500 animate-ping opacity-75 pointer-events-none" />
+        {/* Lock button wrapper */}
+        <div className="relative flex items-center justify-center">
+          {/* Helpful Indicator */}
+          {!isLocked && (
+            <div className="absolute top-14 right-0 md:-right-2 w-[130px] md:w-[150px] animate-bounce pointer-events-none z-50">
+               <div className="text-[9px] md:text-[10px] leading-relaxed bg-slate-900/90 text-emerald-400 p-2.5 rounded-lg border border-emerald-500/30 backdrop-blur-md shadow-[0_0_15px_rgba(16,185,129,0.2)] text-right relative">
+                  <p className="font-bold">Locks the screen.</p>
+                  <p className="text-white/80 italic text-[8.5px] md:text-[9.5px]">Believe me, it's useful!</p>
+                  {/* Small arrow pointing up */}
+                  <div className="absolute -top-1.5 right-4 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[6px] border-b-slate-800" />
+                  <div className="absolute -top-2 right-[15px] w-0 h-0 border-l-[7px] border-l-transparent border-r-[7px] border-r-transparent border-b-[7px] border-b-emerald-500/30 -z-10" />
+               </div>
+            </div>
           )}
 
-          {/* Tooltip */}
-          <span
-            className="absolute -bottom-9 left-1/2 -translate-x-1/2 text-[10px] font-semibold
-                       whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity
-                       pointer-events-none px-2 py-0.5 rounded text-white"
+          <button
+            onClick={toggleLock}
+            title={isLocked ? 'Unlock Navigation & Transitions' : 'Lock Navigation & Transitions'}
+            className={`group relative flex items-center justify-center w-10 h-10 rounded-full transition-all duration-500 cursor-pointer z-10 ${
+              isLocked ? 'animate-pulse' : ''
+            }`}
             style={{
-              background: 'rgba(0,0,0,0.85)',
-              backdropFilter: 'blur(6px)',
-              border: `1px solid ${isLocked ? 'rgba(239, 68, 68, 0.3)' : 'rgba(16, 185, 129, 0.3)'}`,
+              border: isLocked
+                ? '1px solid rgba(239, 68, 68, 0.8)'
+                : '1px solid rgba(16, 185, 129, 0.4)',
+              background: isLocked
+                ? 'rgba(239, 68, 68, 0.25)'
+                : 'rgba(16, 185, 129, 0.1)',
+              boxShadow: isLocked
+                ? '0 0 15px rgba(239, 68, 68, 0.6), inset 0 0 8px rgba(239, 68, 68, 0.2)'
+                : '0 0 8px rgba(16, 185, 129, 0.2)',
+              color: isLocked ? '#f87171' : '#34d399',
             }}
           >
-            {isLocked ? 'Locked' : 'Lock Screen'}
-          </span>
-        </button>
+            {isLocked ? <IoLockClosedOutline size={18} /> : <IoLockOpenOutline size={18} />}
+
+            {/* Pulsating outer ring when locked */}
+            {isLocked && (
+              <span className="absolute inset-0 rounded-full border border-red-500 animate-ping opacity-75 pointer-events-none" />
+            )}
+
+            {/* Tooltip */}
+            <span
+              className="absolute -bottom-9 left-1/2 -translate-x-1/2 text-[10px] font-semibold
+                         whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity
+                         pointer-events-none px-2 py-0.5 rounded text-white"
+              style={{
+                background: 'rgba(0,0,0,0.85)',
+                backdropFilter: 'blur(6px)',
+                border: `1px solid ${isLocked ? 'rgba(239, 68, 68, 0.3)' : 'rgba(16, 185, 129, 0.3)'}`,
+              }}
+            >
+              {isLocked ? 'Locked' : 'Lock Screen'}
+            </span>
+          </button>
+        </div>
       </div>
     </nav>
   );
