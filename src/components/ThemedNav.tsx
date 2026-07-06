@@ -263,7 +263,7 @@ export default function ThemedNav() {
 
   return (
     <nav
-      className="fixed top-0 left-0 right-0 z-[100] flex items-center justify-between px-8 py-4 transition-all duration-700"
+      className="fixed top-0 left-0 right-0 z-[100] flex items-center justify-between px-3 md:px-8 py-3 md:py-4 transition-all duration-700"
       style={{
         background: t.barBg,
         backdropFilter: 'blur(18px)',
@@ -273,9 +273,9 @@ export default function ThemedNav() {
       }}
     >
       {/* ── Logo ─────────────────────────────────────── */}
-      <div className="flex items-center gap-3 select-none">
+      <div className="flex items-center gap-2 md:gap-3 select-none">
         <span
-          className="text-3xl font-black tracking-tight transition-all duration-700"
+          className="text-2xl md:text-3xl font-black tracking-tight transition-all duration-700"
           style={{
             backgroundImage: t.logoGradient,
             WebkitBackgroundClip: 'text',
@@ -299,8 +299,8 @@ export default function ThemedNav() {
       </div>
 
       {/* ── Nav Icons ────────────────────────────────── */}
-      <div className="flex items-center gap-4">
-        <ul className="flex items-center gap-1">
+      <div className="flex items-center gap-2 md:gap-4">
+        <ul className="flex items-center gap-0.5 md:gap-1">
           {NAV_ITEMS.map(({ icon: Icon, label, href }, i) => {
             const isActive = activeIdx === i;
             return (
@@ -309,7 +309,7 @@ export default function ThemedNav() {
                   onClick={() => scrollTo(href)}
                   disabled={isLocked}
                   title={isLocked ? 'Unlock to navigate' : label}
-                  className="group relative flex items-center justify-center w-10 h-10 rounded-full transition-all duration-500"
+                  className="group relative flex items-center justify-center w-8 h-8 md:w-10 md:h-10 rounded-full transition-all duration-500"
                   style={{
                     border: isActive
                       ? `1px solid ${t.accent}`
@@ -321,7 +321,7 @@ export default function ThemedNav() {
                     cursor: isLocked ? 'not-allowed' : 'pointer',
                   }}
                 >
-                  <Icon size={18} />
+                  <Icon className="w-4 h-4 md:w-[18px] md:h-[18px]" />
 
                   {/* Tooltip */}
                   <span
@@ -343,10 +343,10 @@ export default function ThemedNav() {
         </ul>
 
         {/* Separator line */}
-        <div className="w-px h-6 bg-white/10" />
+        <div className="hidden md:block w-px h-6 bg-white/10" />
 
         {/* Lock button wrapper */}
-        <div className="relative flex items-center justify-center">
+        <div className="hidden md:flex relative items-center justify-center">
           {/* Helpful Indicator */}
           {!isLocked && (
             <div className="absolute top-14 right-0 md:-right-2 w-[130px] md:w-[150px] animate-bounce pointer-events-none z-50">

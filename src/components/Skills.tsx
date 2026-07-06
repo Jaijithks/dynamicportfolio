@@ -25,7 +25,7 @@ export default async function Skills() {
     return (
         <section
             id="skills"
-            className="relative min-h-screen w-full overflow-hidden flex items-center justify-center z-0"
+            className="relative max-md:sticky max-md:top-0 min-h-screen w-full overflow-hidden flex items-center justify-center z-0"
         >
             {/* ── Background Video ─────────────────────────── */}
             {/* eslint-disable-next-line jsx-a11y/media-has-caption */}

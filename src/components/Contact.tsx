@@ -76,7 +76,7 @@ export default function Contact() {
   return (
     <section
       id="contact"
-      className="relative min-h-screen w-full overflow-hidden flex items-center justify-center py-24 z-0"
+      className="relative max-md:sticky max-md:top-0 min-h-screen w-full overflow-hidden flex items-center justify-center py-24 z-0"
     >
       {/* ── Background Video ─────────────────────────── */}
       <video

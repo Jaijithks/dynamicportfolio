@@ -88,18 +88,46 @@ const SECTION_THEMES: Record<
 
 const SECTIONS = ['hero', 'about', 'projects', 'skills', 'bookme', 'contact'];
 
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger);
+}
+
 export default function SplashCursorWrapper() {
   const [activeSection, setActiveSection] = useState<string>('hero');
 
   useEffect(() => {
-    const SLOT = 2; // matches page layout: each section slot = 2vh
+    const getSectionTop = (id: string) => {
+      if (typeof window === 'undefined') return 0;
+      
+      const triggers = ScrollTrigger.getAll();
+      const trigger = triggers.find((st) => st.trigger && st.trigger.id === id);
+      if (trigger) {
+        return trigger.start;
+      }
+      
+      const el = document.getElementById(id);
+      if (el) {
+        const spacer = el.closest('.pin-spacer') || el;
+        return window.scrollY + spacer.getBoundingClientRect().top;
+      }
+      return 0;
+    };
+
     const handleScroll = () => {
-      const vh = window.innerHeight;
-      const idx = Math.min(
-        Math.floor(window.scrollY / (SLOT * vh)),
-        SECTIONS.length - 1
-      );
-      setActiveSection(SECTIONS[idx]);
+      const scrollY = window.scrollY;
+      let currentIdx = 0;
+      
+      for (let i = 0; i < SECTIONS.length; i++) {
+        const top = getSectionTop(SECTIONS[i]);
+        if (scrollY >= top - window.innerHeight * 0.3) {
+          currentIdx = i;
+        }
+      }
+      
+      setActiveSection(SECTIONS[currentIdx]);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
