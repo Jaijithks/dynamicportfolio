@@ -60,8 +60,12 @@ export default function StarField() {
       }));
     };
 
+    let isVisible = false;
+
     let t = 0;
     const draw = () => {
+      if (!isVisible) return;
+
       t += 0.012;
       ctx.clearRect(0, 0, w, h);
 
@@ -98,10 +102,24 @@ export default function StarField() {
 
     resize();
     window.addEventListener('resize', resize);
-    draw();
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = entry.isIntersecting;
+        if (isVisible) {
+          draw();
+        } else {
+          cancelAnimationFrame(animId);
+        }
+      },
+      { threshold: 0 }
+    );
+    observer.observe(canvas);
+
     return () => {
       cancelAnimationFrame(animId);
       window.removeEventListener('resize', resize);
+      observer.disconnect();
     };
   }, []);
 

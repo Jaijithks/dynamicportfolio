@@ -1,35 +1,21 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import SmartBackgroundVideo from './SmartBackgroundVideo';
 
 export default function Hero() {
-    const videoRef = useRef<HTMLVideoElement>(null);
-
-    /* Keep video looping smoothly */
-    useEffect(() => {
-        const v = videoRef.current;
-        if (!v) return;
-        v.playbackRate = 0.85;
-    }, []);
-
     return (
         <section
             id="hero"
             className="relative max-md:sticky max-md:top-0 min-h-screen w-full overflow-hidden flex flex-col items-center justify-center z-0"
         >
             {/* ── Background Video ───────────────────── */}
-            <video
-                ref={videoRef}
-                className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none -z-20"
-                autoPlay
-                muted
-                loop
-                playsInline
-                poster=""
-            >
-                <source src="/hero/heroback1.webm" type="video/webm" />
-                <source src="/hero/heroback2.mp4" type="video/mp4" />
-            </video>
+            <SmartBackgroundVideo 
+                playbackRate={0.85}
+                sources={[
+                    { src: "/hero/heroback1.webm", type: "video/webm" },
+                    { src: "/hero/heroback2.mp4", type: "video/mp4" }
+                ]}
+            />
 
             {/* ── Dark fire overlay ──────────────────── */}
             <div

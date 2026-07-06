@@ -1,5 +1,6 @@
 'use client';
 
+import SmartBackgroundVideo from './SmartBackgroundVideo';
 import { useEffect, useState, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { Mail, Phone, Copy, Check, Download } from 'lucide-react';
@@ -79,16 +80,12 @@ export default function Contact() {
       className="relative max-md:sticky max-md:top-0 min-h-screen w-full overflow-hidden flex items-center justify-center py-24 z-0"
     >
       {/* ── Background Video ─────────────────────────── */}
-      <video
-        className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none -z-20"
-        autoPlay
-        muted
-        loop
-        playsInline
-      >
-        <source src="/contact/contactback1.webm" type="video/webm" />
-        <source src="/contact/contactback.mp4" type="video/mp4" />
-      </video>
+      <SmartBackgroundVideo 
+        sources={[
+          { src: "/contact/contactback1.webm", type: "video/webm" },
+          { src: "/contact/contactback.mp4", type: "video/mp4" }
+        ]}
+      />
 
       {/* Deep space overlay */}
       <div

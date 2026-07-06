@@ -53,7 +53,11 @@ export default function EarthParticles() {
       return p;
     });
 
+    let isVisible = false;
+
     const draw = () => {
+      if (!isVisible) return;
+
       ctx.clearRect(0, 0, w, h);
       particles.forEach((p, i) => {
         p.y += p.speedY;
@@ -82,11 +86,24 @@ export default function EarthParticles() {
 
     resize();
     window.addEventListener('resize', resize);
-    draw();
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = entry.isIntersecting;
+        if (isVisible) {
+          draw();
+        } else {
+          cancelAnimationFrame(animId);
+        }
+      },
+      { threshold: 0 }
+    );
+    observer.observe(canvas);
 
     return () => {
       cancelAnimationFrame(animId);
       window.removeEventListener('resize', resize);
+      observer.disconnect();
     };
   }, []);
 

@@ -150,6 +150,9 @@ export default function SplashCursorWrapper() {
       DENSITY_DISSIPATION={theme.DENSITY_DISSIPATION}
       VELOCITY_DISSIPATION={theme.VELOCITY_DISSIPATION}
       TRANSPARENT={true}
+      SIM_RESOLUTION={64}
+      DYE_RESOLUTION={512}
+      PRESSURE_ITERATIONS={10}
     />
   );
 }
