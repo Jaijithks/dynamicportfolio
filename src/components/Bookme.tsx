@@ -142,7 +142,7 @@ export default function Bookme() {
   return (
     <section
       id="bookme"
-      className="relative min-h-screen w-full overflow-hidden flex items-center justify-center py-24 z-0"
+      className="relative min-h-screen w-full overflow-hidden flex items-center justify-center py-12 z-0"
     >
       {/* ── Background Video ─────────────────────────── */}
       <video
@@ -181,7 +181,7 @@ export default function Bookme() {
 
       <div className="relative z-10 w-full max-w-xl mx-auto px-6 md:px-10 flex flex-col items-center justify-center text-center">
         {/* Booking Form Card — High Transparency Glassmorphism */}
-        <div className="relative w-full max-h-[70vh] overflow-y-auto scrollbar-glow bg-gradient-to-br from-slate-950/30 to-slate-900/20 backdrop-blur-md border border-white/10 rounded-2xl p-8 md:p-10 shadow-[0_12px_40px_rgba(0,0,0,0.6)]">
+        <div className="relative w-full max-h-[80vh] overflow-y-auto scrollbar-glow bg-gradient-to-br from-slate-950/30 to-slate-900/20 backdrop-blur-md border border-white/10 rounded-2xl p-8 md:p-10 shadow-[0_12px_40px_rgba(0,0,0,0.6)]">
           {/* Accent border highlights matching the Wind theme */}
           <div className="absolute top-0 left-1/4 right-1/4 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(147,197,253,0.5), transparent)' }} />
           <div className="absolute bottom-0 left-1/4 right-1/4 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(96,165,250,0.5), transparent)' }} />
