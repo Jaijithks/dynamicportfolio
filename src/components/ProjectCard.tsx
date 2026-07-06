@@ -41,7 +41,7 @@ export default function ProjectCard({ project, index }: ProjectCardProps) {
   return (
     <div
       ref={cardRef}
-      className={`sticky top-0 snap-start min-h-[480px] lg:min-h-[380px] flex flex-col lg:flex-row items-center gap-8 bg-gradient-to-br from-sky-950/90 to-slate-950/90 backdrop-blur-2xl border border-white/5 rounded-2xl p-6 lg:p-8 hover:border-sky-400/30 hover:shadow-[0_20px_50px_rgba(14,165,233,0.15)] transition-all duration-700 ease-out relative overflow-hidden group ${
+      className={`sticky top-0 min-h-[480px] lg:min-h-[380px] flex flex-col lg:flex-row items-center gap-8 bg-gradient-to-br from-sky-950/90 to-slate-950/90 backdrop-blur-2xl border border-white/5 rounded-2xl p-6 lg:p-8 hover:border-sky-400/30 hover:shadow-[0_20px_50px_rgba(14,165,233,0.15)] transition-all duration-700 ease-out relative overflow-hidden group ${
         isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-[0.98]'
       }`}
       style={{
