@@ -1,5 +1,7 @@
 'use client';
 import { useRef, useEffect, useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 /* Wind streak canvas — fast light wisps */
 function WindCanvas() {
@@ -73,7 +75,6 @@ export default function Bookme() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
-  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   const SERVICES = [
     'Portfolio Website',
@@ -98,12 +99,11 @@ export default function Bookme() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!service || !expectedTime || !meetingTime || !name || !email) {
-      setToast({ message: 'Please fill in all required fields.', type: 'error' });
+      toast.error('Please fill in all required fields.');
       return;
     }
 
     setLoading(true);
-    setToast(null);
 
     try {
       const response = await fetch('http://localhost:4500/api/book/bookme', {
@@ -124,7 +124,7 @@ export default function Bookme() {
         throw new Error('Server error');
       }
 
-      setToast({ message: 'Booking Request Sent Successfully', type: 'success' });
+      toast.success("Booked! I'll get back to you soon.");
       // Reset form
       setService('');
       setExpectedTime('');
@@ -133,19 +133,11 @@ export default function Bookme() {
       setEmail('');
     } catch (error) {
       console.error(error);
-      setToast({ message: 'Something went wrong. Please try again.', type: 'error' });
+      toast.error('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
   };
-
-  // Auto-dismiss toast
-  useEffect(() => {
-    if (toast) {
-      const timer = setTimeout(() => setToast(null), 4000);
-      return () => clearTimeout(timer);
-    }
-  }, [toast]);
 
   return (
     <section
@@ -189,7 +181,7 @@ export default function Bookme() {
 
       <div className="relative z-10 w-full max-w-xl mx-auto px-6 md:px-10 flex flex-col items-center justify-center text-center">
         {/* Booking Form Card — High Transparency Glassmorphism */}
-        <div className="relative bg-gradient-to-br from-slate-950/30 to-slate-900/20 backdrop-blur-md border border-white/10 rounded-2xl p-8 md:p-10 shadow-[0_12px_40px_rgba(0,0,0,0.6)] overflow-hidden">
+        <div className="relative w-full max-h-[70vh] overflow-y-auto scrollbar-glow bg-gradient-to-br from-slate-950/30 to-slate-900/20 backdrop-blur-md border border-white/10 rounded-2xl p-8 md:p-10 shadow-[0_12px_40px_rgba(0,0,0,0.6)]">
           {/* Accent border highlights matching the Wind theme */}
           <div className="absolute top-0 left-1/4 right-1/4 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(147,197,253,0.5), transparent)' }} />
           <div className="absolute bottom-0 left-1/4 right-1/4 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(96,165,250,0.5), transparent)' }} />
@@ -319,18 +311,7 @@ export default function Bookme() {
       </div>
 
       {/* Premium Toast Notification */}
-      {toast && (
-        <div className="fixed bottom-10 right-10 z-[150] flex items-center gap-3 px-5 py-4 rounded-xl border border-white/10 bg-slate-950/90 backdrop-blur-xl text-xs shadow-[0_10px_40px_rgba(0,0,0,0.6)] animate-in fade-in slide-in-from-bottom-5 duration-300">
-          <div
-            className={`w-2 h-2 rounded-full ${
-              toast.type === 'success'
-                ? 'bg-green-400 shadow-[0_0_10px_rgba(74,222,128,0.5)]'
-                : 'bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]'
-            }`}
-          />
-          <span className="font-medium text-white">{toast.message}</span>
-        </div>
-      )}
+      <ToastContainer position="bottom-right" theme="dark" />
     </section>
   );
 }

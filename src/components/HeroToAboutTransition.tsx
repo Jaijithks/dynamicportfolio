@@ -53,10 +53,7 @@ export default function HeroToAboutTransition() {
 
   // 2. Control loader display on early scroll (only if scrolled past threshold and not loaded)
   useEffect(() => {
-    if (loaded) {
-      setShowLoader(false);
-      return;
-    }
+    if (loaded) return;
     const handleScroll = () => {
       if (window.scrollY > SCROLL_THRESHOLD) {
         setShowLoader(true);
@@ -68,7 +65,8 @@ export default function HeroToAboutTransition() {
 
   // 3. Prevent scroll when loader is active
   useEffect(() => {
-    if (showLoader) {
+    const isLoaderActive = showLoader && !loaded;
+    if (isLoaderActive) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -76,7 +74,7 @@ export default function HeroToAboutTransition() {
     return () => {
       document.body.style.overflow = '';
     };
-  }, [showLoader]);
+  }, [showLoader, loaded]);
 
   // 4. GSAP ScrollTrigger and Canvas rendering
   useEffect(() => {
@@ -213,7 +211,7 @@ export default function HeroToAboutTransition() {
 
   return (
     <>
-      {showLoader && (
+      {showLoader && !loaded && (
         <div className="fixed inset-0 w-screen h-screen flex flex-col items-center justify-center bg-black/85 backdrop-blur-md z-[10000]">
           <div className="w-12 h-12 border-2 border-purple-500/25 border-t-purple-500 rounded-full animate-spin mb-4" />
           <p className="text-xs uppercase tracking-[0.25em] text-purple-300/70 font-bold animate-pulse">

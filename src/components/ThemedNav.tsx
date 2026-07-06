@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { IoHomeOutline } from 'react-icons/io5';
+import { useEffect, useRef, useState } from 'react';
+import { IoHomeOutline, IoLockClosedOutline, IoLockOpenOutline } from 'react-icons/io5';
 import { CiCircleInfo } from 'react-icons/ci';
 import { FaProjectDiagram } from 'react-icons/fa';
 import { GiSkills } from 'react-icons/gi';
@@ -135,6 +135,50 @@ const SECTION_IDS = ['hero', 'about', 'projects', 'skills', 'bookme', 'contact']
 export default function ThemedNav() {
   const [activeIdx, setActiveIdx] = useState(0);
   const [section, setSection] = useState('hero');
+  const [isLocked, setIsLocked] = useState(false);
+  const lockedSectionRef = useRef<string | null>(null);
+
+  // When locked: block body scroll and make the active section internally scrollable
+  useEffect(() => {
+    if (isLocked && lockedSectionRef.current) {
+      document.body.style.overflow = 'hidden';
+
+      const sectionEl = document.getElementById(lockedSectionRef.current);
+      if (sectionEl) {
+        sectionEl.style.height = '100vh';
+        sectionEl.style.overflowY = 'auto';
+        // Hide scrollbar but keep functionality
+        sectionEl.style.scrollbarWidth = 'none'; // Firefox
+        // For Webkit (Chrome, Safari), we rely on CSS, but this is a decent inline fallback
+      }
+    } else {
+      document.body.style.overflow = '';
+
+      // Restore all section elements to their natural state
+      SECTION_IDS.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.style.height = '';
+          el.style.overflowY = '';
+          el.style.scrollbarWidth = '';
+        }
+      });
+
+      lockedSectionRef.current = null;
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+      SECTION_IDS.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.style.height = '';
+          el.style.overflowY = '';
+          el.style.scrollbarWidth = '';
+        }
+      });
+    };
+  }, [isLocked]);
 
   /* ── Section detection via scroll-position math ──────────────────────
      With end:'+=200%' and 100vh spacers, each section slot = 2vh:
@@ -149,6 +193,9 @@ export default function ThemedNav() {
 
   useEffect(() => {
     const handleScroll = () => {
+      // Do not detect section changes if locked, keeping the user locked into the current view
+      if (isLocked) return;
+
       const vh = window.innerHeight;
       const idx = Math.min(
         Math.floor(window.scrollY / (SLOT * vh)),
@@ -162,12 +209,30 @@ export default function ThemedNav() {
     handleScroll();
 
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isLocked]);
 
   const t = THEMES[section] ?? THEMES.hero;
 
+  const toggleLock = () => {
+    if (!isLocked) {
+      // Snap instantly to the start of the current active section
+      const idx = SECTION_IDS.indexOf(section);
+      if (idx >= 0) {
+        window.scrollTo({
+          top: idx * SLOT * window.innerHeight,
+          behavior: 'auto',
+        });
+      }
+      lockedSectionRef.current = section;
+      setIsLocked(true);
+    } else {
+      setIsLocked(false);
+    }
+  };
+
   /* ── Nav scrollTo: each section lives at (index × SLOT × vh) ──────── */
   const scrollTo = (href: string) => {
+    if (isLocked) return;
     const id = href.replace('#', '');
     const idx = SECTION_IDS.indexOf(id);
     if (idx < 0) return;
@@ -212,44 +277,109 @@ export default function ThemedNav() {
       </div>
 
       {/* ── Nav Icons ────────────────────────────────── */}
-      <ul className="flex items-center gap-1">
-        {NAV_ITEMS.map(({ icon: Icon, label, href }, i) => {
-          const isActive = activeIdx === i;
-          return (
-            <li key={label}>
-              <button
-                onClick={() => scrollTo(href)}
-                title={label}
-                className="group relative flex items-center justify-center w-10 h-10 rounded-full transition-all duration-500"
-                style={{
-                  border: isActive
-                    ? `1px solid ${t.accent}`
-                    : '1px solid rgba(255,255,255,0.10)',
-                  background: isActive ? t.activeBg : 'rgba(0,0,0,0.20)',
-                  boxShadow: isActive ? t.activeGlow : 'none',
-                  color: isActive ? t.activeColor : t.inactiveColor,
-                }}
-              >
-                <Icon size={18} />
-
-                {/* Tooltip */}
-                <span
-                  className="absolute -bottom-9 left-1/2 -translate-x-1/2 text-[10px] font-medium
-                             whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity
-                             pointer-events-none px-2 py-0.5 rounded"
+      <div className="flex items-center gap-4">
+        <ul className="flex items-center gap-1">
+          {NAV_ITEMS.map(({ icon: Icon, label, href }, i) => {
+            const isActive = activeIdx === i;
+            return (
+              <li key={label}>
+                <button
+                  onClick={() => scrollTo(href)}
+                  disabled={isLocked}
+                  title={isLocked ? 'Unlock to navigate' : label}
+                  className="group relative flex items-center justify-center w-10 h-10 rounded-full transition-all duration-500"
                   style={{
-                    background: 'rgba(0,0,0,0.75)',
-                    color: t.tooltipColor,
-                    backdropFilter: 'blur(6px)',
+                    border: isActive
+                      ? `1px solid ${t.accent}`
+                      : '1px solid rgba(255,255,255,0.10)',
+                    background: isActive ? t.activeBg : 'rgba(0,0,0,0.20)',
+                    boxShadow: isActive ? t.activeGlow : 'none',
+                    color: isActive ? t.activeColor : t.inactiveColor,
+                    opacity: isLocked && !isActive ? 0.35 : 1,
+                    cursor: isLocked ? 'not-allowed' : 'pointer',
                   }}
                 >
-                  {label}
-                </span>
-              </button>
-            </li>
-          );
-        })}
-      </ul>
+                  <Icon size={18} />
+
+                  {/* Tooltip */}
+                  <span
+                    className="absolute -bottom-9 left-1/2 -translate-x-1/2 text-[10px] font-medium
+                               whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity
+                               pointer-events-none px-2 py-0.5 rounded"
+                    style={{
+                      background: 'rgba(0,0,0,0.75)',
+                      color: isLocked ? 'rgba(255,255,255,0.5)' : t.tooltipColor,
+                      backdropFilter: 'blur(6px)',
+                    }}
+                  >
+                    {isLocked ? 'Unlock to navigate' : label}
+                  </span>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+
+        {/* Separator line */}
+        <div className="w-px h-6 bg-white/10" />
+
+        {/* Lock button wrapper */}
+        <div className="relative flex items-center justify-center">
+          {/* Helpful Indicator */}
+          {!isLocked && (
+            <div className="absolute top-14 right-0 md:-right-2 w-[130px] md:w-[150px] animate-bounce pointer-events-none z-50">
+               <div className="text-[9px] md:text-[10px] leading-relaxed bg-slate-900/90 text-emerald-400 p-2.5 rounded-lg border border-emerald-500/30 backdrop-blur-md shadow-[0_0_15px_rgba(16,185,129,0.2)] text-right relative">
+                  <p className="font-bold">Locks the screen.</p>
+                  <p className="text-white/80 italic text-[8.5px] md:text-[9.5px]">Believe me, it's useful!</p>
+                  {/* Small arrow pointing up */}
+                  <div className="absolute -top-1.5 right-4 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[6px] border-b-slate-800" />
+                  <div className="absolute -top-2 right-[15px] w-0 h-0 border-l-[7px] border-l-transparent border-r-[7px] border-r-transparent border-b-[7px] border-b-emerald-500/30 -z-10" />
+               </div>
+            </div>
+          )}
+
+          <button
+            onClick={toggleLock}
+            title={isLocked ? 'Unlock Navigation & Transitions' : 'Lock Navigation & Transitions'}
+            className={`group relative flex items-center justify-center w-10 h-10 rounded-full transition-all duration-500 cursor-pointer z-10 ${
+              isLocked ? 'animate-pulse' : ''
+            }`}
+            style={{
+              border: isLocked
+                ? '1px solid rgba(239, 68, 68, 0.8)'
+                : '1px solid rgba(16, 185, 129, 0.4)',
+              background: isLocked
+                ? 'rgba(239, 68, 68, 0.25)'
+                : 'rgba(16, 185, 129, 0.1)',
+              boxShadow: isLocked
+                ? '0 0 15px rgba(239, 68, 68, 0.6), inset 0 0 8px rgba(239, 68, 68, 0.2)'
+                : '0 0 8px rgba(16, 185, 129, 0.2)',
+              color: isLocked ? '#f87171' : '#34d399',
+            }}
+          >
+            {isLocked ? <IoLockClosedOutline size={18} /> : <IoLockOpenOutline size={18} />}
+
+            {/* Pulsating outer ring when locked */}
+            {isLocked && (
+              <span className="absolute inset-0 rounded-full border border-red-500 animate-ping opacity-75 pointer-events-none" />
+            )}
+
+            {/* Tooltip */}
+            <span
+              className="absolute -bottom-9 left-1/2 -translate-x-1/2 text-[10px] font-semibold
+                         whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity
+                         pointer-events-none px-2 py-0.5 rounded text-white"
+              style={{
+                background: 'rgba(0,0,0,0.85)',
+                backdropFilter: 'blur(6px)',
+                border: `1px solid ${isLocked ? 'rgba(239, 68, 68, 0.3)' : 'rgba(16, 185, 129, 0.3)'}`,
+              }}
+            >
+              {isLocked ? 'Locked' : 'Lock Screen'}
+            </span>
+          </button>
+        </div>
+      </div>
     </nav>
   );
 }
