@@ -14,7 +14,10 @@ export default function WaveCanvas() {
     let animId: number;
     let t = 0;
 
+    let isVisible = false;
+
     const draw = () => {
+      if (!isVisible) return;
       const w = canvas.width  = canvas.offsetWidth;
       const h = canvas.height = canvas.offsetHeight;
       ctx.clearRect(0, 0, w, h);
@@ -48,8 +51,23 @@ export default function WaveCanvas() {
       animId = requestAnimationFrame(draw);
     };
 
-    draw();
-    return () => cancelAnimationFrame(animId);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = entry.isIntersecting;
+        if (isVisible) {
+          draw();
+        } else {
+          cancelAnimationFrame(animId);
+        }
+      },
+      { threshold: 0 }
+    );
+    observer.observe(canvas);
+
+    return () => {
+      cancelAnimationFrame(animId);
+      observer.disconnect();
+    };
   }, []);
 
   return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />;

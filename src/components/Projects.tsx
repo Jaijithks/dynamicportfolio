@@ -3,6 +3,8 @@ import WaveCanvasClient from './WaveCanvasClient';
 
 
 
+import SmartBackgroundVideo from './SmartBackgroundVideo';
+
 type Project = {
   _id: string;
   name: string;
@@ -42,16 +44,12 @@ export default async function Projects() {
       className="relative max-md:sticky max-md:top-0 min-h-screen w-full overflow-hidden flex items-center justify-center z-0"
     >
       {/* ── Background Video ─────────────────────────── */}
-      <video
-        className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none -z-20"
-        autoPlay
-        muted
-        loop
-        playsInline
-      >
-        <source src="/project/projectback1.webm" type="video/webm" />
-        <source src="/project/projectback.mp4" type="video/mp4" />
-      </video>
+      <SmartBackgroundVideo 
+        sources={[
+          { src: "/project/projectback1.webm", type: "video/webm" },
+          { src: "/project/projectback.mp4", type: "video/mp4" }
+        ]}
+      />
 
       {/* Dark frost overlay */}
       <div

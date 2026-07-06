@@ -1,5 +1,7 @@
 import SkillCard from './SkillCard';
 
+import SmartBackgroundVideo from './SmartBackgroundVideo';
+
 type Skill = {
     title: string;
     description: string;
@@ -28,17 +30,12 @@ export default async function Skills() {
             className="relative max-md:sticky max-md:top-0 min-h-screen w-full overflow-hidden flex items-center justify-center z-0"
         >
             {/* ── Background Video ─────────────────────────── */}
-            {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-            <video
-                className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none -z-20"
-                autoPlay
-                muted
-                loop
-                playsInline
-            >
-                <source src="/skills/skillsback1.webm" type="video/webm" />
-                <source src="/skills/skllsback.mp4" type="video/mp4" />
-            </video>
+            <SmartBackgroundVideo 
+                sources={[
+                    { src: "/skills/skillsback1.webm", type: "video/webm" },
+                    { src: "/skills/skllsback.mp4", type: "video/mp4" }
+                ]}
+            />
 
             {/* Dark electric overlay */}
             <div
