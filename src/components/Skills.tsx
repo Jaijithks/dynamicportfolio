@@ -27,7 +27,7 @@ export default async function Skills() {
     return (
         <section
             id="skills"
-            className="relative max-md:sticky max-md:top-0 min-h-screen w-full overflow-hidden flex items-center justify-center z-0"
+            className="sticky top-0 min-h-screen w-full overflow-hidden flex items-center justify-center z-30"
         >
             {/* ── Background Video ─────────────────────────── */}
             <SmartBackgroundVideo 

@@ -1,6 +1,5 @@
 import { Suspense } from "react";
 import Hero from "@/components/Hero";
-import SectionTransitionWrapper from "@/components/SectionTransitionWrapper";
 import About from "@/components/About";
 import Projects from "@/components/Projects";
 import Skills from "@/components/Skills";
@@ -13,36 +12,11 @@ export default function Home() {
       {/* ── Hero ──────────────────────────────────── */}
       <Hero />
 
-      {/* ── Hero → About ──────────────────────────── */}
-      <SectionTransitionWrapper
-        sequencePath="/sequence herotoabout"
-        triggerSectionId="hero"
-        loadDelay={0}
-      />
-      {/* Spacer: bridges the 2vh pin duration to About */}
-      <div className="hidden md:block h-screen" aria-hidden="true" />
-
       {/* ── About ─────────────────────────────────── */}
       <About />
 
-      {/* ── About → Projects ──────────────────────── */}
-      <SectionTransitionWrapper
-        sequencePath="/sequence abouttoproject"
-        triggerSectionId="about"
-        loadDelay={500}
-      />
-      <div className="hidden md:block h-screen" aria-hidden="true" />
-
       {/* ── Projects ──────────────────────────────── */}
       <Projects />
-
-      {/* ── Projects → Skills ─────────────────────── */}
-      <SectionTransitionWrapper
-        sequencePath="/sequence projecttoskills"
-        triggerSectionId="projects"
-        loadDelay={1000}
-      />
-      <div className="hidden md:block h-screen" aria-hidden="true" />
 
       {/* ── Skills ────────────────────────────────── */}
       <Suspense
@@ -64,24 +38,8 @@ export default function Home() {
         <Skills />
       </Suspense>
 
-      {/* ── Skills → Book Me ──────────────────────── */}
-      <SectionTransitionWrapper
-        sequencePath="/sequence skillstobookme"
-        triggerSectionId="skills"
-        loadDelay={1500}
-      />
-      <div className="hidden md:block h-screen" aria-hidden="true" />
-
       {/* ── Book Me ───────────────────────────────── */}
       <Bookme />
-
-      {/* ── Book Me → Contact ─────────────────────── */}
-      <SectionTransitionWrapper
-        sequencePath="/sequence bookmetocontact"
-        triggerSectionId="bookme"
-        loadDelay={2000}
-      />
-      <div className="hidden md:block h-screen" aria-hidden="true" />
 
       {/* ── Contact ───────────────────────────────── */}
       <Contact />

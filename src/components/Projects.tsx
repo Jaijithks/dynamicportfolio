@@ -41,7 +41,7 @@ export default async function Projects() {
   return (
     <section
       id="projects"
-      className="relative max-md:sticky max-md:top-0 min-h-screen w-full overflow-hidden flex items-center justify-center z-0"
+      className="sticky top-0 min-h-screen w-full overflow-hidden flex items-center justify-center z-20"
     >
       {/* ── Background Video ─────────────────────────── */}
       <SmartBackgroundVideo 
