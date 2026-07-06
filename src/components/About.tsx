@@ -47,7 +47,7 @@ export default async function About() {
   return (
     <section
       id="about"
-      className="relative min-h-screen w-full overflow-hidden flex items-center justify-center z-0"
+      className="relative max-md:sticky max-md:top-0 min-h-screen w-full overflow-hidden flex items-center justify-center z-0"
     >
       {/* ── Background Video ─────────────────────────── */}
       <video

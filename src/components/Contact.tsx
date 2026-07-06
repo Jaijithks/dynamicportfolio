@@ -76,7 +76,7 @@ export default function Contact() {
   return (
     <section
       id="contact"
-      className="relative min-h-screen w-full overflow-hidden flex items-center justify-center py-24 z-0"
+      className="relative max-md:sticky max-md:top-0 min-h-screen w-full overflow-hidden flex items-center justify-center py-24 z-0"
     >
       {/* ── Background Video ─────────────────────────── */}
       <video
@@ -287,8 +287,9 @@ export default function Contact() {
         {(loadingResume || (resume && resume.resume_url)) && (
           <div
             ref={resumeRef}
-            className={`w-full max-w-xl mx-auto mt-12 rounded-2xl p-6 md:p-8 border border-purple-500/10 bg-slate-950/20 backdrop-blur-md transition-all duration-1000 ease-out animate-soft-pulse relative overflow-hidden group/card ${isResumeVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-[0.98]'
-              }`}
+            className={`w-full max-w-xl mx-auto mt-12 rounded-2xl p-6 md:p-8 border border-purple-500/10 bg-slate-950/20 backdrop-blur-md transition-all duration-1000 ease-out animate-soft-pulse relative overflow-hidden group/card ${
+              isResumeVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-[0.98]'
+            }`}
           >
             {/* Top border glowing highlight */}
             <div className="absolute top-0 left-1/4 right-1/4 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(168,85,247,0.45), transparent)' }} />

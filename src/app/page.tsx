@@ -20,7 +20,7 @@ export default function Home() {
         loadDelay={0}
       />
       {/* Spacer: bridges the 2vh pin duration to About */}
-      <div style={{ height: '100vh' }} aria-hidden="true" />
+      <div className="hidden md:block h-screen" aria-hidden="true" />
 
       {/* ── About ─────────────────────────────────── */}
       <About />
@@ -31,7 +31,7 @@ export default function Home() {
         triggerSectionId="about"
         loadDelay={500}
       />
-      <div style={{ height: '100vh' }} aria-hidden="true" />
+      <div className="hidden md:block h-screen" aria-hidden="true" />
 
       {/* ── Projects ──────────────────────────────── */}
       <Projects />
@@ -42,7 +42,7 @@ export default function Home() {
         triggerSectionId="projects"
         loadDelay={1000}
       />
-      <div style={{ height: '100vh' }} aria-hidden="true" />
+      <div className="hidden md:block h-screen" aria-hidden="true" />
 
       {/* ── Skills ────────────────────────────────── */}
       <Suspense
@@ -70,7 +70,7 @@ export default function Home() {
         triggerSectionId="skills"
         loadDelay={1500}
       />
-      <div style={{ height: '100vh' }} aria-hidden="true" />
+      <div className="hidden md:block h-screen" aria-hidden="true" />
 
       {/* ── Book Me ───────────────────────────────── */}
       <Bookme />
@@ -81,7 +81,7 @@ export default function Home() {
         triggerSectionId="bookme"
         loadDelay={2000}
       />
-      <div style={{ height: '100vh' }} aria-hidden="true" />
+      <div className="hidden md:block h-screen" aria-hidden="true" />
 
       {/* ── Contact ───────────────────────────────── */}
       <Contact />
