@@ -106,7 +106,7 @@ export default async function Projects() {
         </div>
 
         {/* Right Column: Scrollable list container */}
-        <div className="lg:w-[60%] w-full h-[65vh] overflow-y-auto snap-y snap-mandatory scrollbar-glow pr-4 text-center flex flex-col justify-start pb-[30vh]">
+        <div className="lg:w-[60%] w-full h-[65vh] overflow-y-auto scrollbar-glow pr-4 text-center flex flex-col justify-start pb-[30vh]">
           {error ? (
             /* Elegant glass error card */
             <div className="snap-start bg-slate-950/20 backdrop-blur-md border border-red-500/20 rounded-2xl p-10 shadow-[0_8px_32px_rgba(0,0,0,0.4)] relative overflow-hidden text-center max-w-md mx-auto my-auto">
