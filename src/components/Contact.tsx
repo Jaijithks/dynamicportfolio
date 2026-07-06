@@ -43,11 +43,11 @@ export default function Contact() {
 
   useEffect(() => {
     Promise.all([
-      fetch('http://localhost:4500/api/book/viewcontact', { cache: 'no-store' })
+      fetch('https://my-api-6pmy.onrender.com/api/book/viewcontact', { cache: 'no-store' })
         .then((r) => r.json())
         .then((data) => setContact(data.currentContact))
         .catch(console.error),
-      fetch('http://localhost:4500/api/profile/resume', { cache: 'no-store' })
+      fetch('https://my-api-6pmy.onrender.com/api/profile/resume', { cache: 'no-store' })
         .then((r) => r.json())
         .then((data) => {
           setResume(data.data.resume);
