@@ -130,6 +130,13 @@ const NAV_ITEMS = [
   { icon: IoIosContact,label: 'Contact',  href: '#contact' },
 ];
 
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger);
+}
+
 const SECTION_IDS = ['hero', 'about', 'projects', 'skills', 'bookme', 'contact'];
 
 export default function ThemedNav() {
@@ -180,29 +187,46 @@ export default function ThemedNav() {
     };
   }, [isLocked]);
 
-  /* ── Section detection via scroll-position math ──────────────────────
-     With end:'+=200%' and 100vh spacers, each section slot = 2vh:
-       hero     → scrollY in [0,      2vh)
-       about    → scrollY in [2vh,    4vh)
-       projects → scrollY in [4vh,    6vh)
-       skills   → scrollY in [6vh,    8vh)
-       bookme   → scrollY in [8vh,   10vh)
-       contact  → scrollY >= 10vh
-  ───────────────────────────────────────────────────────────────────── */
-  const SLOT = 2; // each section slot = 2 × viewport height
+  // Helper to get the exact top position of a section, even if it's currently pinned by GSAP
+  const getSectionTop = (id: string) => {
+    if (typeof window === 'undefined') return 0;
+
+    // 1. First, check GSAP ScrollTrigger for the exact pinned start position
+    const triggers = ScrollTrigger.getAll();
+    const trigger = triggers.find((st) => st.trigger && st.trigger.id === id);
+    if (trigger) {
+      return trigger.start;
+    }
+
+    // 2. Fallback to DOM measurement (for sections like Contact that aren't pinned)
+    const el = document.getElementById(id);
+    if (el) {
+      const spacer = el.closest('.pin-spacer') || el;
+      return window.scrollY + spacer.getBoundingClientRect().top;
+    }
+    
+    return 0;
+  };
 
   useEffect(() => {
     const handleScroll = () => {
       // Do not detect section changes if locked, keeping the user locked into the current view
       if (isLocked) return;
 
-      const vh = window.innerHeight;
-      const idx = Math.min(
-        Math.floor(window.scrollY / (SLOT * vh)),
-        SECTION_IDS.length - 1
-      );
-      setSection(SECTION_IDS[idx]);
-      setActiveIdx(idx);
+      const scrollY = window.scrollY;
+      
+      // Dynamically find which section we are in
+      let currentIdx = 0;
+      for (let i = 0; i < SECTION_IDS.length; i++) {
+        const top = getSectionTop(SECTION_IDS[i]);
+        // Add a small 10px buffer to ensure we switch slightly early when snapping
+        if (scrollY >= top - 10) {
+          currentIdx = i;
+        }
+      }
+
+      setSection(SECTION_IDS[currentIdx]);
+      setActiveIdx(currentIdx);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -215,14 +239,13 @@ export default function ThemedNav() {
 
   const toggleLock = () => {
     if (!isLocked) {
-      // Snap instantly to the start of the current active section
-      const idx = SECTION_IDS.indexOf(section);
-      if (idx >= 0) {
-        window.scrollTo({
-          top: idx * SLOT * window.innerHeight,
-          behavior: 'auto',
-        });
-      }
+      // Snap instantly to the exact start of the current active section
+      const targetTop = getSectionTop(section);
+      window.scrollTo({
+        top: targetTop,
+        behavior: 'auto',
+      });
+      
       lockedSectionRef.current = section;
       setIsLocked(true);
     } else {
@@ -230,13 +253,12 @@ export default function ThemedNav() {
     }
   };
 
-  /* ── Nav scrollTo: each section lives at (index × SLOT × vh) ──────── */
+  /* ── Nav scrollTo: Uses precise DOM/GSAP positions ──────── */
   const scrollTo = (href: string) => {
     if (isLocked) return;
     const id = href.replace('#', '');
-    const idx = SECTION_IDS.indexOf(id);
-    if (idx < 0) return;
-    window.scrollTo({ top: idx * SLOT * window.innerHeight, behavior: 'smooth' });
+    const targetTop = getSectionTop(id);
+    window.scrollTo({ top: targetTop, behavior: 'smooth' });
   };
 
   return (
