@@ -1,89 +1,86 @@
 'use client';
 
-import SmartBackgroundVideo from './SmartBackgroundVideo';
+import { useEffect, useRef } from 'react';
 
 export default function Hero() {
+    const sectionRef = useRef<HTMLElement>(null);
+
+    useEffect(() => {
+        const els = sectionRef.current?.querySelectorAll('.reveal');
+        if (!els) return;
+        const observer = new IntersectionObserver(
+            (entries) => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+            { threshold: 0.1 }
+        );
+        els.forEach(el => observer.observe(el));
+        return () => observer.disconnect();
+    }, []);
+
     return (
         <section
+            ref={sectionRef}
             id="hero"
-            className="sticky top-0 min-h-screen w-full overflow-hidden flex flex-col items-center justify-center z-0"
+            className="relative min-h-screen w-full overflow-hidden flex flex-col justify-between"
+            style={{ background: '#050505' }}
         >
-            {/* ── Background Video ───────────────────── */}
-            <SmartBackgroundVideo 
-                playbackRate={0.85}
-                sources={[
-                    { src: "/hero/heroback1.webm", type: "video/webm" },
-                    { src: "/hero/heroback2.mp4", type: "video/mp4" }
-                ]}
-            />
-
-            {/* ── Dark fire overlay ──────────────────── */}
-            <div
-                className="absolute inset-0 -z-10"
-                style={{
-                    background:
-                        'linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(10,3,0,0.30) 50%, rgba(0,0,0,0.75) 100%)',
-                }}
-            />
-
-            {/* ── Ember vignette ────────────────────── */}
-            <div
-                className="absolute inset-0 pointer-events-none -z-10"
-                style={{
-                    background:
-                        'radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.65) 100%)',
-                }}
-            />
-
-            {/* ── Spacer for fixed nav ──────────────── */}
-            <div className="relative z-10 h-[68px]" />
-
-            {/* ── Hero Content ──────────────────────── */}
-            <div className="relative z-10 w-full max-w-6xl mx-auto px-6 md:px-10 flex flex-col items-center justify-center text-center gap-6 flex-1">
-                {/* Name */}
-                <h1
-                    className="text-6xl sm:text-8xl font-black tracking-tight leading-none"
-                    style={{
-                        backgroundImage: 'linear-gradient(180deg, #fff5e0 0%, #ffb347 35%, #ff4500 70%, #cc1a00 100%)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        backgroundClip: 'text',
-                        filter: 'drop-shadow(0 0 30px rgba(255,100,0,0.7))',
-                    }}
+            {/* ── Hero Content — left-aligned, massive ── */}
+            <div className="relative z-10 w-full max-w-7xl mx-auto px-8 md:px-16 flex flex-col justify-center flex-1 pt-24">
+                {/* Overline */}
+                <p
+                    className="reveal text-[10px] md:text-xs font-medium tracking-[0.35em] uppercase mb-6"
+                    style={{ color: 'rgba(212,168,83,0.7)' }}
                 >
-                    JAIJITH KS
+                    BASED IN KERALA, INDIA
+                </p>
+
+                {/* Name — massive, left-aligned */}
+                <h1 className="reveal reveal-delay-1">
+                    <span
+                        className="block text-[clamp(4rem,12vw,11rem)] font-black tracking-tighter leading-[0.85] text-white"
+                    >
+                        JAIJITH
+                    </span>
+                    <span
+                        className="block text-[clamp(4rem,12vw,11rem)] font-black tracking-tighter leading-[0.85] text-stroke"
+                    >
+                        KS
+                    </span>
                 </h1>
 
-                {/* Tagline */}
-                <p
-                    className="text-xl sm:text-2xl font-light tracking-widest uppercase"
-                    style={{ color: 'rgba(255,200,120,0.85)', letterSpacing: '0.3em' }}
-                >
-                    Develop From Scratch
-                </p>
-
-                {/* Bio */}
-                <p
-                    className="max-w-lg text-base sm:text-lg leading-relaxed"
-                    style={{ color: 'rgba(255,220,180,0.70)' }}
-                >
-                    I am a passionate developer who loves to build cool, blazing‑fast projects.
-                </p>
-
-                {/* CTA */}
-
+                {/* Role tags */}
+                <div className="reveal reveal-delay-2 flex items-center gap-3 mt-8">
+                    <span
+                        className="text-xs md:text-sm font-light tracking-[0.25em] uppercase italic"
+                        style={{ color: 'rgba(212,168,83,0.6)' }}
+                    >
+                        Developer
+                    </span>
+                    <span style={{ color: 'rgba(255,255,255,0.15)' }}>·</span>
+                    <span
+                        className="text-xs md:text-sm font-light tracking-[0.25em] uppercase italic"
+                        style={{ color: 'rgba(212,168,83,0.6)' }}
+                    >
+                        Full Stack
+                    </span>
+                </div>
             </div>
 
-            {/* ── Scroll indicator ──────────────────── */}
-            <div className="relative z-10 flex flex-col items-center pb-8 gap-2 animate-bounce">
-                <span className="text-[10px] uppercase tracking-widest" style={{ color: 'rgba(255,160,60,0.6)' }}>
+            {/* ── Scroll indicator — right side ────────── */}
+            <div className="reveal reveal-delay-3 absolute right-8 md:right-16 bottom-16 flex flex-col items-center gap-3">
+                <div
+                    className="w-px h-12"
+                    style={{ background: 'linear-gradient(to bottom, rgba(255,255,255,0.2), transparent)' }}
+                />
+                <span className="text-[9px] uppercase tracking-[0.3em]" style={{ color: 'rgba(255,255,255,0.25)' }}>
                     Scroll
                 </span>
-                <div
-                    className="w-px h-10"
-                    style={{ background: 'linear-gradient(to bottom, rgba(255,120,0,0.6), transparent)' }}
-                />
             </div>
+
+            {/* ── Bottom edge glow — subtle blue like inspiration ── */}
+            <div
+                className="absolute bottom-0 left-0 right-0 h-px"
+                style={{ background: 'rgba(255,255,255,0.04)' }}
+            />
         </section>
     );
 }

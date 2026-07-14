@@ -9,41 +9,29 @@ import Contact from "@/components/Contact";
 export default function Home() {
   return (
     <main>
-      {/* ── Hero ──────────────────────────────────── */}
       <Hero />
-
-      {/* ── About ─────────────────────────────────── */}
       <About />
-
-      {/* ── Projects ──────────────────────────────── */}
       <Projects />
-
-      {/* ── Skills ────────────────────────────────── */}
       <Suspense
         fallback={
           <div
             className="min-h-screen flex items-center justify-center"
             style={{
-              background: 'linear-gradient(160deg, #06030f 0%, #0d0620 100%)',
-              color: 'rgba(180,120,255,0.5)',
-              letterSpacing: '0.2em',
-              fontSize: '0.75rem',
+              background: '#050505',
+              color: 'rgba(212,168,83,0.3)',
+              letterSpacing: '0.25em',
+              fontSize: '0.7rem',
               textTransform: 'uppercase',
             }}
           >
-            ⚡ Loading Skills…
+            Loading Skills…
           </div>
         }
       >
         <Skills />
       </Suspense>
-
-      {/* ── Book Me ───────────────────────────────── */}
       <Bookme />
-
-      {/* ── Contact ───────────────────────────────── */}
       <Contact />
     </main>
   );
 }
-

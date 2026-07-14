@@ -1,12 +1,8 @@
 'use client';
 
-import SmartBackgroundVideo from './SmartBackgroundVideo';
 import { useEffect, useState, useRef } from 'react';
-import dynamic from 'next/dynamic';
 import { Mail, Phone, Copy, Check, Download } from 'lucide-react';
 import { FaLinkedin as Linkedin, FaGithub as Github } from 'react-icons/fa';
-
-const StarField = dynamic(() => import('./StarField'), { ssr: false });
 
 /* ── Types ─────────────────────────────────────────────────────────────── */
 type Contact = {
@@ -27,20 +23,20 @@ export default function Contact() {
   const [loadingResume, setLoadingResume] = useState(true);
   const [copied, setCopied] = useState(false);
 
-  const resumeRef = useRef<HTMLDivElement>(null);
-  const [isResumeVisible, setIsResumeVisible] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    if (!resumeRef.current) return;
+    if (!sectionRef.current) return;
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
-        setIsResumeVisible(true);
+        setIsVisible(true);
         observer.disconnect();
       }
     }, { threshold: 0.1 });
-    observer.observe(resumeRef.current);
+    observer.observe(sectionRef.current);
     return () => observer.disconnect();
-  }, [resume, loadingResume]);
+  }, []);
 
   useEffect(() => {
     Promise.all([
@@ -76,258 +72,129 @@ export default function Contact() {
 
   return (
     <section
+      ref={sectionRef}
       id="contact"
-      className="sticky top-0 min-h-screen w-full overflow-hidden flex items-center justify-center py-24 z-50"
+      className="relative min-h-screen w-full overflow-hidden flex flex-col justify-between"
+      style={{ background: '#050505' }}
     >
-      {/* ── Background Video ─────────────────────────── */}
-      <SmartBackgroundVideo 
-        sources={[
-          { src: "/contact/contactback1.webm", type: "video/webm" },
-          { src: "/contact/contactback.mp4", type: "video/mp4" }
-        ]}
-      />
+      {/* ── Top divider ────────────────────────────── */}
+      <div className="absolute top-0 left-0 right-0 section-divider" />
 
-      {/* Deep space overlay */}
-      <div
-        className="absolute inset-0 opacity-65 -z-10"
-        style={{ background: 'rgba(0,0,15,0.75)' }}
-      />
+      <div className={`relative z-10 w-full max-w-7xl mx-auto px-8 md:px-16 pt-20 md:pt-32 pb-8 flex-1 flex flex-col justify-center transition-all duration-1000 ease-out ${
+        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+      }`}>
+        {/* Section label */}
+        <div className="flex items-center gap-4 mb-8">
+          <div className="w-10 h-px" style={{ background: 'rgba(212,168,83,0.5)' }} />
+          <span
+            className="text-[10px] font-medium tracking-[0.4em] uppercase"
+            style={{ color: 'rgba(212,168,83,0.7)' }}
+          >
+            GET IN TOUCH
+          </span>
+        </div>
 
-      {/* Animated star field + nebula */}
-      <div className="absolute inset-0 -z-10">
-        <StarField />
-      </div>
-
-      {/* Deep center glow — the "void core" */}
-      <div className="absolute inset-0 pointer-events-none -z-10"
-        style={{ background: 'radial-gradient(ellipse 60% 40% at 50% 50%, rgba(80,0,140,0.18) 0%, transparent 70%)' }} />
-      <div className="absolute inset-0 pointer-events-none -z-10"
-        style={{ background: 'radial-gradient(ellipse 40% 30% at 70% 30%, rgba(0,30,120,0.15) 0%, transparent 60%)' }} />
-      <div className="absolute inset-0 pointer-events-none -z-10"
-        style={{ background: 'radial-gradient(ellipse 35% 25% at 25% 70%, rgba(120,0,80,0.10) 0%, transparent 60%)' }} />
-
-      {/* Top fade */}
-      <div className="absolute top-0 left-0 right-0 h-24 pointer-events-none -z-10"
-        style={{ background: 'linear-gradient(to bottom, rgba(0,0,15,0.8), transparent)' }} />
-
-      {/* Top line */}
-      <div className="absolute top-0 left-0 right-0 h-px -z-10"
-        style={{ background: 'linear-gradient(90deg, transparent, rgba(140,60,220,0.4), rgba(60,60,220,0.4), transparent)' }} />
-
-      <div className="relative z-10 w-full max-w-6xl mx-auto px-6 md:px-10 flex flex-col items-center justify-center text-center">
-        {/* Contact header tag */}
-        <span className="text-xs font-bold tracking-[0.3em] uppercase text-purple-400/90 mb-3 block">
-          — CONTACT —
-        </span>
-
-        {/* Main Title with Sparkle */}
-        <h2
-          className="text-5xl sm:text-6xl font-black mb-6 leading-tight text-white relative inline-block"
-          style={{
-            filter: 'drop-shadow(0 0 20px rgba(160,80,255,0.4))',
-          }}
-        >
-          Reach Out
-          <span className="absolute -top-2 -right-6 text-2xl text-purple-300 animate-pulse">✦</span>
+        {/* Giant heading */}
+        <h2 className="text-5xl sm:text-6xl lg:text-8xl font-black uppercase leading-[1.05] tracking-tight mb-16">
+          <span className="text-white">LET&apos;S<br />CREATE </span>
+          <span className="italic" style={{ color: '#d4a853' }}>TOGETHER</span>
         </h2>
 
-        {/* Subtitle */}
-        <p className="text-sm sm:text-base text-gray-400 max-w-xl mx-auto mb-16 leading-relaxed">
-          Let&apos;s connect and create something extraordinary together.<br />
-          I&apos;m always open to new opportunities and collaborations.
-        </p>
-
-        {/* Contact grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-          {/* Card 1: Email */}
-          <div className="group relative bg-gradient-to-br from-slate-950/20 to-slate-900/10 backdrop-blur-md border border-white/5 rounded-2xl p-6 flex flex-col items-center justify-between text-center transition-all duration-300 hover:scale-[1.02] hover:border-white/15 min-h-[350px]">
-            {/* Corner edge glows */}
-            <div className="absolute top-0 left-1/4 right-1/4 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(168,85,247,0.45), transparent)' }} />
-            <div className="absolute bottom-0 left-1/4 right-1/4 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(168,85,247,0.45), transparent)' }} />
-
-            <div className="relative w-full flex items-center justify-center mb-8 mt-2">
-              <div className="absolute left-0 right-0 h-[1px] border-t border-dotted border-white/10" />
-              <div className="relative z-10 w-16 h-16 rounded-full flex items-center justify-center bg-slate-950/30 border border-purple-500/15 shadow-[0_0_20px_rgba(168,85,247,0.08)] backdrop-blur-sm">
-                <Mail className="w-6 h-6 text-purple-400" />
-              </div>
+        {/* Contact items — minimal rows */}
+        <div className="space-y-8 mb-16">
+          {/* Email */}
+          <div className="flex items-center gap-4 group cursor-pointer" onClick={handleCopy}>
+            <div className="w-10 h-10 rounded-full flex items-center justify-center border" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
+              <Mail className="w-4 h-4" style={{ color: 'rgba(255,255,255,0.3)' }} />
             </div>
-
-            <h3 className="text-xs font-bold tracking-[0.2em] uppercase mb-3 text-purple-400">
-              PROFESSIONAL EMAIL
-            </h3>
-
-            <p className="text-xs text-gray-400 leading-relaxed mb-8 flex-1 max-w-[200px]">
-              For project discussions, collaborations, and inquiries.
-            </p>
-
-            <button
-              onClick={handleCopy}
-              className="w-full flex items-center justify-between px-4 py-2.5 rounded-full border border-purple-500/20 bg-purple-950/15 text-xs text-purple-200/90 font-mono transition-all duration-300 hover:bg-purple-950/25 hover:border-purple-500/35"
-            >
-              <span className="truncate mr-2">{emailValue}</span>
-              {copied ? (
-                <Check className="w-3.5 h-3.5 shrink-0 text-green-400" />
-              ) : (
-                <Copy className="w-3.5 h-3.5 shrink-0 cursor-pointer" />
-              )}
-            </button>
+            <div>
+              <p className="text-[9px] uppercase tracking-[0.3em] mb-1" style={{ color: 'rgba(212,168,83,0.5)' }}>EMAIL</p>
+              <p className="text-sm text-white/70 group-hover:text-white transition-colors flex items-center gap-2">
+                {emailValue}
+                {copied ? <Check className="w-3 h-3 text-green-400" /> : <Copy className="w-3 h-3 opacity-0 group-hover:opacity-50 transition-opacity" />}
+              </p>
+            </div>
           </div>
 
-          {/* Card 2: Phone */}
-          <div className="group relative bg-gradient-to-br from-slate-950/20 to-slate-900/10 backdrop-blur-md border border-white/5 rounded-2xl p-6 flex flex-col items-center justify-between text-center transition-all duration-300 hover:scale-[1.02] hover:border-white/15 min-h-[350px]">
-            {/* Corner edge glows */}
-            <div className="absolute top-0 left-1/4 right-1/4 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(59,130,246,0.45), transparent)' }} />
-            <div className="absolute bottom-0 left-1/4 right-1/4 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(59,130,246,0.45), transparent)' }} />
-
-            <div className="relative w-full flex items-center justify-center mb-8 mt-2">
-              <div className="absolute left-0 right-0 h-[1px] border-t border-dotted border-white/10" />
-              <div className="relative z-10 w-16 h-16 rounded-full flex items-center justify-center bg-slate-950/30 border border-blue-500/15 shadow-[0_0_20px_rgba(59,130,246,0.08)] backdrop-blur-sm">
-                <Phone className="w-5 h-5 text-blue-400" />
-              </div>
+          {/* Phone */}
+          <a href={`tel:${phoneRaw}`} className="flex items-center gap-4 group">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center border" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
+              <Phone className="w-4 h-4" style={{ color: 'rgba(255,255,255,0.3)' }} />
             </div>
-
-            <h3 className="text-xs font-bold tracking-[0.2em] uppercase mb-3 text-blue-400">
-              DIRECT LINE
-            </h3>
-
-            <p className="text-xs text-gray-400 leading-relaxed mb-8 flex-1 max-w-[200px]">
-              Available for professional conversations and consultations.
-            </p>
-
-            <a
-              href={`tel:${phoneRaw}`}
-              className="w-full flex items-center justify-between px-4 py-2.5 rounded-full border border-blue-500/20 bg-blue-950/15 text-xs text-blue-200/90 font-mono transition-all duration-300 hover:bg-blue-950/25 hover:border-blue-500/35"
-            >
-              <span className="truncate mr-2">{phoneValue}</span>
-              <Phone className="w-3.5 h-3.5 shrink-0" />
-            </a>
-          </div>
-
-          {/* Card 3: LinkedIn */}
-          <div className="group relative bg-gradient-to-br from-slate-950/20 to-slate-900/10 backdrop-blur-md border border-white/5 rounded-2xl p-6 flex flex-col items-center justify-between text-center transition-all duration-300 hover:scale-[1.02] hover:border-white/15 min-h-[350px]">
-            {/* Corner edge glows */}
-            <div className="absolute top-0 left-1/4 right-1/4 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(168,85,247,0.45), transparent)' }} />
-            <div className="absolute bottom-0 left-1/4 right-1/4 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(168,85,247,0.45), transparent)' }} />
-
-            <div className="relative w-full flex items-center justify-center mb-8 mt-2">
-              <div className="absolute left-0 right-0 h-[1px] border-t border-dotted border-white/10" />
-              <div className="relative z-10 w-16 h-16 rounded-full flex items-center justify-center bg-slate-950/30 border border-purple-500/15 shadow-[0_0_20px_rgba(168,85,247,0.08)] backdrop-blur-sm">
-                <Linkedin className="w-5 h-5 text-purple-400" />
-              </div>
+            <div>
+              <p className="text-[9px] uppercase tracking-[0.3em] mb-1" style={{ color: 'rgba(212,168,83,0.5)' }}>PHONE</p>
+              <p className="text-sm text-white/70 group-hover:text-white transition-colors">{phoneValue}</p>
             </div>
+          </a>
 
-            <h3 className="text-xs font-bold tracking-[0.2em] uppercase mb-3 text-purple-400">
-              LINKEDIN
-            </h3>
-
-            <p className="text-xs text-gray-400 leading-relaxed mb-8 flex-1 max-w-[200px]">
-              Connect with me on LinkedIn to view my journey, experience, and professional updates.
-            </p>
-
-            <a
-              href={linkedinLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-full border border-purple-500/20 bg-purple-950/15 text-xs text-purple-200/90 font-medium transition-all duration-300 hover:bg-purple-950/25 hover:border-purple-500/35"
-            >
-              <span>Connect Professionally</span>
-              <span className="text-[10px]">→</span>
-            </a>
-          </div>
-
-          {/* Card 4: GitHub */}
-          <div className="group relative bg-gradient-to-br from-slate-950/20 to-slate-900/10 backdrop-blur-md border border-white/5 rounded-2xl p-6 flex flex-col items-center justify-between text-center transition-all duration-300 hover:scale-[1.02] hover:border-white/15 min-h-[350px]">
-            {/* Corner edge glows */}
-            <div className="absolute top-0 left-1/4 right-1/4 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(59,130,246,0.45), transparent)' }} />
-            <div className="absolute bottom-0 left-1/4 right-1/4 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(59,130,246,0.45), transparent)' }} />
-
-            <div className="relative w-full flex items-center justify-center mb-8 mt-2">
-              <div className="absolute left-0 right-0 h-[1px] border-t border-dotted border-white/10" />
-              <div className="relative z-10 w-16 h-16 rounded-full flex items-center justify-center bg-slate-950/30 border border-blue-500/15 shadow-[0_0_20px_rgba(59,130,246,0.08)] backdrop-blur-sm">
-                <Github className="w-5 h-5 text-blue-400" />
-              </div>
+          {/* LinkedIn */}
+          <a href={linkedinLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 group">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center border" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
+              <Linkedin className="w-4 h-4" style={{ color: 'rgba(255,255,255,0.3)' }} />
             </div>
+            <div>
+              <p className="text-[9px] uppercase tracking-[0.3em] mb-1" style={{ color: 'rgba(212,168,83,0.5)' }}>LINKEDIN</p>
+              <p className="text-sm text-white/70 group-hover:text-white transition-colors">Connect Professionally →</p>
+            </div>
+          </a>
 
-            <h3 className="text-xs font-bold tracking-[0.2em] uppercase mb-3 text-blue-400">
-              GITHUB
-            </h3>
-
-            <p className="text-xs text-gray-400 leading-relaxed mb-8 flex-1 max-w-[200px]">
-              Explore my repositories, open-source projects, and contributions.
-            </p>
-
-            <a
-              href={githubLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-full border border-blue-500/20 bg-blue-950/15 text-xs text-blue-200/90 font-medium transition-all duration-300 hover:bg-blue-950/25 hover:border-blue-500/35"
-            >
-              <span>Explore My Work</span>
-              <span className="text-[10px]">→</span>
-            </a>
-          </div>
+          {/* GitHub */}
+          <a href={githubLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 group">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center border" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
+              <Github className="w-4 h-4" style={{ color: 'rgba(255,255,255,0.3)' }} />
+            </div>
+            <div>
+              <p className="text-[9px] uppercase tracking-[0.3em] mb-1" style={{ color: 'rgba(212,168,83,0.5)' }}>GITHUB</p>
+              <p className="text-sm text-white/70 group-hover:text-white transition-colors">Explore My Work →</p>
+            </div>
+          </a>
         </div>
 
-        {/* Bottom capsule indicator */}
-        <div className="relative z-10 flex items-center justify-center">
-          <div className="flex flex-wrap items-center justify-center gap-4 px-6 py-3 rounded-full border border-white/5 bg-slate-950/20 backdrop-blur-sm text-xs text-purple-200/80 shadow-[0_4px_30px_rgba(0,0,0,0.2)]">
-            <span className="text-purple-400">🚀</span>
-            <span>Open to Full-Time Roles</span>
-            <span className="text-purple-500/40">•</span>
-            <span>Freelance Projects</span>
-            <span className="text-purple-500/40">•</span>
-            <span>Technical Collaborations</span>
-          </div>
-        </div>
-
-        {/* New Resume Section */}
+        {/* Resume Download */}
         {(loadingResume || (resume && resume.resume_url)) && (
-          <div
-            ref={resumeRef}
-            className={`w-full max-w-xl mx-auto mt-12 rounded-2xl p-6 md:p-8 border border-purple-500/10 bg-slate-950/20 backdrop-blur-md transition-all duration-1000 ease-out animate-soft-pulse relative overflow-hidden group/card ${
-              isResumeVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-[0.98]'
-            }`}
-          >
-            {/* Top border glowing highlight */}
-            <div className="absolute top-0 left-1/4 right-1/4 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(168,85,247,0.45), transparent)' }} />
-
-            <p className="text-sm md:text-base leading-relaxed text-purple-200/80 mb-6 max-w-md mx-auto">
-              Interested in learning more about my experience and technical background?
-            </p>
-
-            <div className="flex justify-center">
-              {loadingResume ? (
-                <button
-                  disabled
-                  className="w-[250px] py-3.5 px-6 rounded-full font-bold text-xs uppercase tracking-wider text-purple-300/50 bg-slate-900 border border-purple-500/10 flex items-center justify-center gap-2 cursor-not-allowed"
-                >
-                  <div className="w-3.5 h-3.5 border-2 border-purple-500/30 border-t-purple-500 rounded-full animate-spin" />
-                  <span>Loading Resume...</span>
-                </button>
-              ) : (
-                <a
-                  href={resume?.resume_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  download
-                  className="w-[250px] py-3.5 px-6 rounded-full font-bold text-xs uppercase tracking-wider text-white transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] hover:shadow-[0_0_25px_rgba(168,85,247,0.3),_0_0_15px_rgba(59,130,246,0.2)] flex items-center justify-center gap-2 cursor-pointer group/btn animate-breathe"
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(168,85,247,0.4), rgba(59,130,246,0.4))',
-                    border: '1px solid rgba(168,85,247,0.4)',
-                  }}
-                >
-                  <Download className="w-3.5 h-3.5 text-purple-300 transition-transform group-hover/btn:translate-x-0.5" />
-                  <span>Download Resume</span>
-                  <span className="text-[10px] text-purple-300 font-light ml-0.5">↓</span>
-                </a>
-              )}
-            </div>
+          <div className="mb-16">
+            {loadingResume ? (
+              <button
+                disabled
+                className="px-8 py-3.5 text-[10px] uppercase tracking-[0.25em] font-medium border flex items-center gap-3 cursor-not-allowed"
+                style={{ borderColor: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.25)' }}
+              >
+                <div className="w-3 h-3 border border-white/20 border-t-white rounded-full animate-spin" />
+                <span>LOADING RESUME</span>
+              </button>
+            ) : (
+              <a
+                href={resume?.resume_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                download
+                className="inline-flex items-center gap-3 px-8 py-3.5 text-[10px] uppercase tracking-[0.25em] font-medium text-white border transition-all duration-300 hover:bg-white hover:text-black cursor-pointer animate-breathe"
+                style={{ borderColor: 'rgba(255,255,255,0.15)' }}
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>DOWNLOAD RESUME</span>
+              </a>
+            )}
           </div>
         )}
       </div>
 
+      {/* ── Watermark ──────────────────────────────── */}
+      <div className="absolute bottom-16 left-8 md:left-16 right-8 pointer-events-none select-none overflow-hidden">
+        <p className="text-[clamp(5rem,15vw,14rem)] font-black uppercase leading-none tracking-tight watermark">
+          CONTACT
+        </p>
+      </div>
 
+      {/* ── Footer ─────────────────────────────────── */}
+      <footer className="relative z-10 w-full border-t py-6 px-8 md:px-16 flex items-center justify-between" style={{ borderColor: 'rgba(255,255,255,0.04)' }}>
+        <p className="text-[9px] uppercase tracking-[0.25em]" style={{ color: 'rgba(255,255,255,0.2)' }}>
+          © 2025 JAIJITH KS. ALL RIGHTS RESERVED.
+        </p>
+        <p className="text-[9px] uppercase tracking-[0.25em]" style={{ color: 'rgba(255,255,255,0.15)' }}>
+          JAIJITH KS
+        </p>
+      </footer>
     </section>
   );
 }
-

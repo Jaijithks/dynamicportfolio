@@ -1,74 +1,8 @@
 'use client';
 
-import SmartBackgroundVideo from './SmartBackgroundVideo';
-import { useRef, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-/* Wind streak canvas — fast light wisps */
-function WindCanvas() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    let animId: number;
-    let w = 0, h = 0;
-
-    interface Wisp {
-      x: number; y: number; len: number;
-      speed: number; opacity: number; width: number;
-    }
-
-    let wisps: Wisp[] = [];
-
-    const resize = () => {
-      w = canvas.width = canvas.offsetWidth;
-      h = canvas.height = canvas.offsetHeight;
-      wisps = Array.from({ length: 45 }, () => spawnWisp(true));
-    };
-
-    const spawnWisp = (init = false): Wisp => ({
-      x: init ? Math.random() * w : -300,
-      y: Math.random() * h,
-      len: Math.random() * 160 + 60,
-      speed: Math.random() * 4 + 1.5,
-      opacity: Math.random() * 0.18 + 0.04,
-      width: Math.random() * 1.5 + 0.3,
-    });
-
-    const draw = () => {
-      ctx.clearRect(0, 0, w, h);
-      wisps.forEach((wisp, i) => {
-        wisp.x += wisp.speed;
-        if (wisp.x > w + 300) wisps[i] = spawnWisp();
-
-        const grad = ctx.createLinearGradient(wisp.x, wisp.y, wisp.x + wisp.len, wisp.y);
-        grad.addColorStop(0, `rgba(200,230,255,0)`);
-        grad.addColorStop(0.3, `rgba(200,230,255,${wisp.opacity})`);
-        grad.addColorStop(1, `rgba(200,230,255,0)`);
-
-        ctx.beginPath();
-        ctx.moveTo(wisp.x, wisp.y);
-        ctx.lineTo(wisp.x + wisp.len, wisp.y);
-        ctx.strokeStyle = grad;
-        ctx.lineWidth = wisp.width;
-        ctx.stroke();
-      });
-      animId = requestAnimationFrame(draw);
-    };
-
-    resize();
-    window.addEventListener('resize', resize);
-    draw();
-    return () => { cancelAnimationFrame(animId); window.removeEventListener('resize', resize); };
-  }, []);
-
-  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />;
-}
 
 export default function Bookme() {
   const [service, setService] = useState('');
@@ -127,7 +61,6 @@ export default function Bookme() {
       }
 
       toast.success("Booked! I'll get back to you soon.");
-      // Reset form
       setService('');
       setExpectedTime('');
       setMeetingTime('');
@@ -141,174 +74,167 @@ export default function Bookme() {
     }
   };
 
+  const inputClasses = "w-full px-0 py-4 bg-transparent text-sm text-white border-b focus:outline-none transition-colors duration-300 placeholder-white/15 focus:border-[rgba(212,168,83,0.4)]";
+
   return (
     <section
       id="bookme"
-      className="sticky top-0 min-h-screen w-full overflow-hidden flex items-center justify-center py-12 z-40"
+      className="relative min-h-screen w-full overflow-hidden flex items-center"
+      style={{ background: '#050505' }}
     >
-      {/* ── Background Video ─────────────────────────── */}
-      <SmartBackgroundVideo 
-        sources={[
-          { src: "/bookme/bookeme.webm", type: "video/webm" },
-          { src: "/bookme/bookme1.mp4", type: "video/mp4" }
-        ]}
-      />
+      {/* ── Top divider ────────────────────────────── */}
+      <div className="absolute top-0 left-0 right-0 section-divider" />
 
-      {/* Dark wind overlay */}
-      <div
-        className="absolute inset-0 -z-10"
-        style={{
-          background: 'linear-gradient(160deg, rgba(5,16,26,0.80) 0%, rgba(8,24,40,0.74) 40%, rgba(6,15,28,0.77) 70%, rgba(4,12,22,0.82) 100%)',
-        }}
-      />
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-8 md:px-16 py-20 md:py-32">
+        <div className="grid md:grid-cols-2 gap-16 md:gap-24 items-start">
+          {/* Left: Heading */}
+          <div>
+            {/* Section label */}
+            <div className="flex items-center gap-4 mb-8">
+              <div className="w-10 h-px" style={{ background: 'rgba(212,168,83,0.5)' }} />
+              <span
+                className="text-[10px] font-medium tracking-[0.4em] uppercase"
+                style={{ color: 'rgba(212,168,83,0.7)' }}
+              >
+                BOOK ME
+              </span>
+            </div>
 
-      {/* Airy sky glows */}
-      <div className="absolute inset-0 pointer-events-none -z-10"
-        style={{ background: 'radial-gradient(ellipse 70% 50% at 70% 40%, rgba(100,180,255,0.10) 0%, transparent 70%)' }} />
-      <div className="absolute inset-0 pointer-events-none -z-10"
-        style={{ background: 'radial-gradient(ellipse 50% 40% at 20% 70%, rgba(60,140,220,0.07) 0%, transparent 60%)' }} />
-
-      {/* Wind wisps canvas */}
-      <div className="absolute inset-0 -z-10">
-        <WindCanvas />
-      </div>
-
-      {/* Top line */}
-      <div className="absolute top-0 left-0 right-0 h-px -z-10"
-        style={{ background: 'linear-gradient(90deg, transparent, rgba(120,180,255,0.35), transparent)' }} />
-
-      <div className="relative z-10 w-full max-w-xl mx-auto px-6 md:px-10 flex flex-col items-center justify-center text-center">
-        {/* Booking Form Card — High Transparency Glassmorphism */}
-        <div className="relative w-full max-h-[80vh] overflow-y-auto scrollbar-glow bg-gradient-to-br from-slate-950/30 to-slate-900/20 backdrop-blur-md border border-white/10 rounded-2xl p-8 md:p-10 shadow-[0_12px_40px_rgba(0,0,0,0.6)]">
-          {/* Accent border highlights matching the Wind theme */}
-          <div className="absolute top-0 left-1/4 right-1/4 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(147,197,253,0.5), transparent)' }} />
-          <div className="absolute bottom-0 left-1/4 right-1/4 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(96,165,250,0.5), transparent)' }} />
-
-          <div className="text-center mb-8">
-            <span className="text-xs font-bold tracking-[0.3em] uppercase text-sky-400 block mb-2">
-              BOOK A CONSULTATION
-            </span>
-            <h2
-              className="text-3xl font-black text-white mb-2 tracking-tight"
-              style={{ filter: 'drop-shadow(0 0 10px rgba(147,197,253,0.3))' }}
-            >
-              Ready to collaborate?
+            <h2 className="text-5xl sm:text-6xl lg:text-7xl font-black uppercase leading-[1.05] tracking-tight mb-8">
+              <span className="text-white">LET&apos;S </span>
+              <span className="italic" style={{ color: '#d4a853' }}>WORK</span>
+              <br />
+              <span className="text-white">TOGETHER</span>
             </h2>
-            <p className="text-xs text-blue-200/60 leading-relaxed">
-              Let&apos;s discuss your project and find the best solution.
+
+            <p className="text-sm leading-[1.8] max-w-sm" style={{ color: 'rgba(255,255,255,0.35)' }}>
+              Ready to bring your project to life? Fill out the form and I&apos;ll get back to you within 24 hours.
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5 text-left">
-            {/* Service Select */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-sky-300">Service *</label>
-              <div className="relative w-full">
+          {/* Right: Form */}
+          <div>
+            <form onSubmit={handleSubmit} className="space-y-1">
+              {/* Service Select */}
+              <div className="relative">
+                <label className="text-[9px] font-medium tracking-[0.3em] uppercase block mb-1" style={{ color: 'rgba(212,168,83,0.5)' }}>
+                  SERVICE
+                </label>
                 <select
                   required
                   value={service}
                   onChange={(e) => setService(e.target.value)}
-                  className="w-full px-5 py-3.5 rounded-xl border border-white/5 bg-slate-950/30 text-xs text-white focus:outline-none focus:border-sky-400/40 focus:bg-slate-950/50 transition duration-300 appearance-none cursor-pointer"
+                  className={`${inputClasses} appearance-none cursor-pointer`}
+                  style={{ borderColor: 'rgba(255,255,255,0.06)' }}
                 >
-                  <option value="" disabled>Select Service ▼</option>
+                  <option value="" disabled>Select a service</option>
                   {SERVICES.map((s) => (
-                    <option key={s} value={s} className="bg-slate-950 text-white">
+                    <option key={s} value={s} className="bg-[#0a0a0a] text-white">
                       {s}
                     </option>
                   ))}
                 </select>
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-sky-400/50 text-[10px]">
-                  ▼
-                </div>
               </div>
-            </div>
 
-            {/* Expected Timeline */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-sky-300">Expected Timeline *</label>
-              <div className="relative w-full">
+              {/* Timeline */}
+              <div className="relative">
+                <label className="text-[9px] font-medium tracking-[0.3em] uppercase block mb-1 pt-4" style={{ color: 'rgba(212,168,83,0.5)' }}>
+                  TIMELINE
+                </label>
                 <select
                   required
                   value={expectedTime}
                   onChange={(e) => setExpectedTime(e.target.value)}
-                  className="w-full px-5 py-3.5 rounded-xl border border-white/5 bg-slate-950/30 text-xs text-white focus:outline-none focus:border-sky-400/40 focus:bg-slate-950/50 transition duration-300 appearance-none cursor-pointer"
+                  className={`${inputClasses} appearance-none cursor-pointer`}
+                  style={{ borderColor: 'rgba(255,255,255,0.06)' }}
                 >
-                  <option value="" disabled>Select Timeline ▼</option>
+                  <option value="" disabled>Select timeline</option>
                   {TIMELINES.map((t) => (
-                    <option key={t} value={t} className="bg-slate-950 text-white">
+                    <option key={t} value={t} className="bg-[#0a0a0a] text-white">
                       {t}
                     </option>
                   ))}
                 </select>
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-sky-400/50 text-[10px]">
-                  ▼
-                </div>
               </div>
-            </div>
 
-            {/* Preferred Meeting Time */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-sky-300">Preferred Meeting Time *</label>
-              <input
-                type="datetime-local"
-                required
-                value={meetingTime}
-                onChange={(e) => setMeetingTime(e.target.value)}
-                className="w-full px-5 py-3.5 rounded-xl border border-white/5 bg-slate-950/30 text-xs text-white focus:outline-none focus:border-sky-400/40 focus:bg-slate-950/50 transition duration-300 cursor-pointer"
-              />
-            </div>
+              {/* Meeting Time */}
+              <div>
+                <label className="text-[9px] font-medium tracking-[0.3em] uppercase block mb-1 pt-4" style={{ color: 'rgba(212,168,83,0.5)' }}>
+                  MEETING TIME
+                </label>
+                <input
+                  type="datetime-local"
+                  required
+                  value={meetingTime}
+                  onChange={(e) => setMeetingTime(e.target.value)}
+                  className={inputClasses}
+                  style={{ borderColor: 'rgba(255,255,255,0.06)' }}
+                />
+              </div>
 
-            {/* Full Name */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-sky-300">Full Name *</label>
-              <input
-                type="text"
-                required
-                placeholder="Enter your name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full px-5 py-3.5 rounded-xl border border-white/5 bg-slate-950/30 text-xs text-white placeholder-white/20 focus:outline-none focus:border-sky-400/40 focus:bg-slate-950/50 transition duration-300"
-              />
-            </div>
+              {/* Name */}
+              <div>
+                <label className="text-[9px] font-medium tracking-[0.3em] uppercase block mb-1 pt-4" style={{ color: 'rgba(212,168,83,0.5)' }}>
+                  FULL NAME
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Your name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className={inputClasses}
+                  style={{ borderColor: 'rgba(255,255,255,0.06)' }}
+                />
+              </div>
 
-            {/* Email Address */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-sky-300">Email Address *</label>
-              <input
-                type="email"
-                required
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-5 py-3.5 rounded-xl border border-white/5 bg-slate-950/30 text-xs text-white placeholder-white/20 focus:outline-none focus:border-sky-400/40 focus:bg-slate-950/50 transition duration-300"
-              />
-            </div>
+              {/* Email */}
+              <div>
+                <label className="text-[9px] font-medium tracking-[0.3em] uppercase block mb-1 pt-4" style={{ color: 'rgba(212,168,83,0.5)' }}>
+                  EMAIL
+                </label>
+                <input
+                  type="email"
+                  required
+                  placeholder="your@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className={inputClasses}
+                  style={{ borderColor: 'rgba(255,255,255,0.06)' }}
+                />
+              </div>
 
-            {/* Submit Button — Wind Sky theme */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-4 px-6 rounded-xl font-bold text-xs uppercase tracking-wider text-blue-100 transition-all duration-300 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2 cursor-pointer mt-6"
-              style={{
-                background: 'linear-gradient(135deg, rgba(59,130,246,0.25), rgba(147,197,253,0.25))',
-                border: '1px solid rgba(147,197,253,0.35)',
-                boxShadow: '0 4px 20px rgba(147,197,253,0.15)',
-              }}
-            >
-              {loading ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span>Submitting...</span>
-                </>
-              ) : (
-                <span>Book Consultation</span>
-              )}
-            </button>
-          </form>
+              {/* Submit */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="mt-10 px-10 py-4 text-xs uppercase tracking-[0.25em] font-semibold text-white border transition-all duration-300 hover:bg-white hover:text-black disabled:opacity-40 disabled:pointer-events-none cursor-pointer flex items-center gap-3"
+                style={{ borderColor: 'rgba(255,255,255,0.15)' }}
+              >
+                {loading ? (
+                  <>
+                    <div className="w-3.5 h-3.5 border border-white/30 border-t-white rounded-full animate-spin" />
+                    <span>SUBMITTING</span>
+                  </>
+                ) : (
+                  <>
+                    <span>BOOK NOW</span>
+                    <span className="text-[10px]">→</span>
+                  </>
+                )}
+              </button>
+            </form>
+          </div>
         </div>
       </div>
 
-      {/* Premium Toast Notification */}
+      {/* ── Watermark ──────────────────────────────── */}
+      <div className="absolute bottom-8 left-8 md:left-16 right-8 pointer-events-none select-none overflow-hidden">
+        <p className="text-[clamp(5rem,15vw,14rem)] font-black uppercase leading-none tracking-tight watermark">
+          BOOK ME
+        </p>
+      </div>
+
       <ToastContainer position="bottom-right" theme="dark" />
     </section>
   );
