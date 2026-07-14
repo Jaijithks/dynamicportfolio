@@ -67,8 +67,12 @@ export default function Contact() {
   const emailValue = contact?.email || 'jajithks01@gmail.com';
   const phoneRaw = contact?.phone || '9207505581';
   const phoneValue = typeof phoneRaw === 'number' || !phoneRaw.startsWith('+') ? `+91 ${phoneRaw}` : phoneRaw;
-  const githubLink = contact?.github || 'https://github.com/Jaijithks';
-  const linkedinLink = contact?.linkedin || 'https://www.linkedin.com/in/jaijithks01';
+  // Ensure external URLs have a protocol so the browser doesn't treat them as relative paths
+  const ensureAbsoluteUrl = (url: string) =>
+    url.startsWith('http://') || url.startsWith('https://') ? url : `https://${url}`;
+
+  const githubLink = ensureAbsoluteUrl(contact?.github || 'https://github.com/Jaijithks');
+  const linkedinLink = ensureAbsoluteUrl(contact?.linkedin || 'https://www.linkedin.com/in/jaijithks01');
 
   return (
     <section
