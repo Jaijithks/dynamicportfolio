@@ -1,7 +1,4 @@
 import AboutClient from './AboutClient';
-import EarthParticlesClient from './EarthParticlesClient';
-import SmartBackgroundVideo from './SmartBackgroundVideo';
-
 
 type About = {
   headline: string;
@@ -48,62 +45,21 @@ export default async function About() {
   return (
     <section
       id="about"
-      className="sticky top-0 min-h-screen w-full overflow-hidden flex items-center justify-center z-10"
+      className="relative min-h-screen w-full overflow-hidden"
+      style={{ background: '#050505' }}
     >
-      {/* ── Background Video ─────────────────────────── */}
-      <SmartBackgroundVideo 
-        sources={[
-          { src: "/about/aboutback.webm", type: "video/webm" },
-          { src: "/about/abouback2.mp4", type: "video/mp4" }
-        ]}
-      />
-
-      {/* Dark overlay to preserve readability */}
-      <div
-        className="absolute inset-0 -z-10"
-        style={{
-          background: 'linear-gradient(160deg, rgba(10,26,8,0.78) 0%, rgba(15,28,10,0.72) 30%, rgba(26,16,5,0.75) 60%, rgba(13,18,8,0.80) 100%)',
-        }}
-      />
-
-      {/* Earthy radial glow */}
-      <div
-        className="absolute inset-0 pointer-events-none -z-10"
-        style={{
-          background: 'radial-gradient(ellipse 70% 50% at 30% 60%, rgba(60,100,30,0.18) 0%, transparent 70%)',
-        }}
-      />
-      <div
-        className="absolute inset-0 pointer-events-none -z-10"
-        style={{
-          background: 'radial-gradient(ellipse 50% 40% at 80% 30%, rgba(100,70,20,0.12) 0%, transparent 60%)',
-        }}
-      />
-
-      {/* Floating particles (Client Component) */}
-      <div className="absolute inset-0 -z-10">
-        <EarthParticlesClient />
-      </div>
-
-      {/* Horizontal divider line at top */}
-      <div
-        className="absolute top-0 left-0 right-0 h-px -z-10"
-        style={{ background: 'linear-gradient(90deg, transparent, rgba(80,120,40,0.5), transparent)' }}
-      />
+      {/* ── Top divider ────────────────────────────── */}
+      <div className="absolute top-0 left-0 right-0 section-divider" />
 
       {error || !data ? (
-        /* Elegant glass error card */
-        <div className="relative z-10 max-w-md mx-auto px-6 w-full text-center">
-          <div className="bg-slate-950/20 backdrop-blur-md border border-red-500/20 rounded-2xl p-10 shadow-[0_8px_32px_rgba(0,0,0,0.4)] relative overflow-hidden">
-            <div className="absolute top-0 left-1/4 right-1/4 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(239,68,68,0.5), transparent)' }} />
-            <span className="text-3xl block mb-3">🌍</span>
-            <p className="text-sm font-semibold text-red-300">
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center px-6">
+            <p className="text-sm" style={{ color: 'rgba(255,255,255,0.3)' }}>
               Unable to load profile.
             </p>
           </div>
         </div>
       ) : (
-        /* Render about content details */
         <AboutClient
           data={{
             headline: data.about.headline,
@@ -113,12 +69,6 @@ export default async function About() {
           }}
         />
       )}
-
-      {/* Bottom divider */}
-      <div
-        className="absolute bottom-0 left-0 right-0 h-px"
-        style={{ background: 'linear-gradient(90deg, transparent, rgba(80,120,40,0.4), transparent)' }}
-      />
     </section>
   );
 }

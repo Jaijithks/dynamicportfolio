@@ -33,71 +33,112 @@ export default function AboutClient({ data }: { data: AboutData }) {
   return (
     <div
       ref={containerRef}
-      className={`relative z-10 max-w-5xl mx-auto px-6 md:px-10 py-8 md:py-20 grid md:grid-cols-2 gap-8 md:gap-16 items-center transition-all duration-1000 ease-out ${
-        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
-      }`}
+      className={`relative z-10 w-full max-w-7xl mx-auto px-8 md:px-16 py-20 md:py-32 transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+        }`}
     >
-      {/* Left Column: Headline & Status */}
-      <div className="text-left flex flex-col items-start justify-center">
-        <span
-          className="text-[10px] md:text-xs font-bold tracking-[0.3em] uppercase mb-2 md:mb-4 block"
-          style={{ color: 'rgba(120,180,60,0.7)' }}
-        >
-          🌍 About
-        </span>
-        
-        <h2
-          className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight mb-4 md:mb-6"
-          style={{
-            backgroundImage: 'linear-gradient(135deg, #a8d878 0%, #6db33f 40%, #4a7c2f 80%, #2d5a1b 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-            filter: 'drop-shadow(0 0 20px rgba(80,160,30,0.45))',
-          }}
-        >
-          {data.headline}
-        </h2>
-
-        {/* Muted green readable status paragraph */}
-        <p 
-          className="text-xs md:text-sm lg:text-base leading-relaxed max-w-xl font-light" 
-          style={{ color: 'rgba(180,220,140,0.75)' }}
-        >
-          {data.status}
-        </p>
+      {/* ── Marquee ticker ─────────────────────────── */}
+      <div className="overflow-hidden mb-16 border-y" style={{ borderColor: 'rgba(255,255,255,0.04)' }}>
+        <div className="marquee-track py-4">
+          {[...Array(2)].map((_, i) => (
+            <div key={i} className="flex items-center gap-12 px-6 shrink-0">
+              {['FULL STACK', 'REACT', 'NEXT.JS', 'NODE.JS', 'TYPESCRIPT', 'MONGODB', 'TAILWIND CSS', 'UI/UX'].map((item) => (
+                <span
+                  key={`${i}-${item}`}
+                  className="text-xs md:text-sm font-medium tracking-[0.3em] uppercase whitespace-nowrap"
+                  style={{ color: 'rgba(255,255,255,0.12)' }}
+                >
+                  {item}
+                  <span className="ml-12" style={{ color: 'rgba(212,168,83,0.25)' }}>✦</span>
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* Right Column: Portrait & Projects Completed Card */}
-      <div className="flex flex-col items-center justify-center">
-        {/* Large circular portrait with earth-colored glow & soft float animation */}
-        <div className="relative w-40 h-40 md:w-72 md:h-72 rounded-full overflow-hidden border border-emerald-500/20 bg-emerald-950/20 shadow-[0_0_35px_rgba(80,160,30,0.22)] group hover:scale-[1.03] hover:border-emerald-400/40 hover:shadow-[0_0_45px_rgba(80,160,30,0.35)] transition-all duration-700 ease-out select-none flex items-center justify-center animate-float-slow">
-          <Image
-            src={data.profile_url}
-            alt="Jaijith"
-            width={288}
-            height={288}
-            priority
-            unoptimized
-            className="object-cover rounded-full transition-transform duration-700 group-hover:scale-105"
+      {/* ── Main layout: Image left, Text right ────── */}
+      <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-start">
+        {/* Left: Portrait */}
+        <div className="relative">
+          <div className="relative w-full aspect-[3/4] max-w-lg overflow-hidden">
+            <Image
+              src={data.profile_url}
+              alt="Jaijith"
+              fill
+              priority
+              unoptimized
+              className="object-cover grayscale hover:grayscale-0 transition-all duration-700"
+            />
+          </div>
+          {/* Subtle frame offset border like the inspiration */}
+          <div
+            className="absolute top-3 left-3 right-[-12px] bottom-[-12px] border pointer-events-none"
+            style={{ borderColor: 'rgba(212,168,83,0.12)' }}
           />
-          {/* Subtle reflection glare overlay */}
-          <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/3 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-          {/* Soft overlay */}
-          <div className="absolute inset-0 bg-emerald-950/10 group-hover:bg-transparent transition-colors duration-500" />
         </div>
 
-        {/* Projects Completed Glass Card */}
-        <div className="w-full max-w-[200px] md:max-w-xs mt-6 md:mt-8 rounded-2xl px-4 py-3 md:px-6 md:py-5 text-center transition-all duration-500 hover:scale-[1.02] border border-emerald-500/15 bg-emerald-950/15 backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.45)] relative overflow-hidden group hover:border-emerald-400/30 hover:shadow-[0_8px_32px_rgba(0,0,0,0.45),_0_0_20px_rgba(80,160,30,0.15)]">
-          {/* Top border glowing highlight */}
-          <div className="absolute top-0 left-1/4 right-1/4 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(142,216,120,0.5), transparent)' }} />
-          
-          <p className="text-[9px] md:text-[10px] uppercase tracking-widest text-emerald-400/70 font-semibold mb-1">
-            PROJECTS COMPLETED
+        {/* Right: Content */}
+        <div className="flex flex-col justify-center">
+          {/* Section label with line */}
+          <div className="flex items-center gap-4 mb-8">
+            <div className="w-10 h-px" style={{ background: 'rgba(212,168,83,0.5)' }} />
+            <span
+              className="text-[10px] font-medium tracking-[0.4em] uppercase"
+              style={{ color: 'rgba(212,168,83,0.7)' }}
+            >
+              ABOUT
+            </span>
+          </div>
+
+          {/* Bold headline with italic gold word */}
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black uppercase leading-[1.05] tracking-tight mb-8">
+            <span className="text-white">CODE </span>
+            <span className="text-white">THAT </span>
+            <span
+              className="italic font-black"
+              style={{ color: '#d4a853' }}
+            >
+              SPEAKS
+            </span>
+          </h2>
+
+          {/* Status text */}
+          <p
+            className="text-sm md:text-base leading-[1.8] mb-6 max-w-lg"
+            style={{ color: 'rgba(255,255,255,0.45)' }}
+          >
+            {data.headline}
           </p>
-          <p className="text-2xl md:text-3xl font-black text-white tracking-tight drop-shadow-[0_0_12px_rgba(110,210,90,0.4)]">
-            {data.projectNo}+
+          <p
+            className="text-sm md:text-base leading-[1.8] mb-12 max-w-lg"
+            style={{ color: 'rgba(255,255,255,0.35)' }}
+          >
+            {data.status}
           </p>
+
+          {/* Stats row with divider */}
+          <div className="border-t pt-8" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+            <div className="flex items-start gap-16">
+              <div>
+                <p className="text-4xl md:text-5xl font-black text-white tracking-tight">{data.projectNo}+</p>
+                <p className="text-[9px] md:text-[10px] uppercase tracking-[0.3em] mt-2" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                  PROJECTS
+                </p>
+              </div>
+              <div>
+                <p className="text-4xl md:text-5xl font-black text-white tracking-tight">1</p>
+                <p className="text-[9px] md:text-[10px] uppercase tracking-[0.3em] mt-2" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                  YEARS ACTIVE
+                </p>
+              </div>
+              <div>
+                <p className="text-4xl md:text-5xl font-black text-white tracking-tight">∞</p>
+                <p className="text-[9px] md:text-[10px] uppercase tracking-[0.3em] mt-2" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                  LINES WRITTEN
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

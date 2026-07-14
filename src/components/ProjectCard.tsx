@@ -38,80 +38,69 @@ export default function ProjectCard({ project, index }: ProjectCardProps) {
     return () => observer.disconnect();
   }, []);
 
+  // Alternate heights for masonry-like feel
+  const isLarge = index % 3 === 0;
+
   return (
     <div
       ref={cardRef}
-      className={`sticky top-0 min-h-[480px] lg:min-h-[380px] flex flex-col lg:flex-row items-center gap-8 bg-gradient-to-br from-sky-950/90 to-slate-950/90 backdrop-blur-2xl border border-white/5 rounded-2xl p-6 lg:p-8 hover:border-sky-400/30 hover:shadow-[0_20px_50px_rgba(14,165,233,0.15)] transition-all duration-700 ease-out relative overflow-hidden group ${
-        isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-[0.98]'
-      }`}
+      className={`group relative overflow-hidden cursor-pointer transition-all duration-700 ease-out ${
+        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+      } ${isLarge ? 'row-span-2' : ''}`}
       style={{
-        transitionDelay: `${index * 150}ms`,
+        transitionDelay: `${index * 100}ms`,
       }}
     >
-      {/* Corner edge glows matching the Water/Sky theme */}
-      <div className="absolute top-0 left-1/4 right-1/4 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(56,189,248,0.5), transparent)' }} />
-      <div className="absolute bottom-0 left-1/4 right-1/4 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(14,165,233,0.5), transparent)' }} />
-
-      {/* Glare glass reflection */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/4 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-
-      {/* Left side: Image container */}
-      <div className="w-full lg:w-[45%] shrink-0 overflow-hidden rounded-xl border border-white/10 shadow-[0_8px_24px_rgba(0,0,0,0.4)] relative aspect-video animate-float-slow">
+      {/* Image */}
+      <div className={`relative w-full overflow-hidden ${isLarge ? 'aspect-[3/4]' : 'aspect-[4/3]'}`}>
         <Image
           src={project.image}
           alt={project.name}
           fill
           loading="lazy"
           unoptimized
-          className="object-cover transition-transform duration-700 group-hover:scale-105"
+          className="object-cover transition-all duration-700 group-hover:scale-105 group-hover:brightness-75"
         />
-        {/* Subtle hover overlay */}
-        <div className="absolute inset-0 bg-sky-950/10 group-hover:bg-transparent transition-colors duration-500" />
-      </div>
 
-      {/* Right side: Content */}
-      <div className="w-full lg:w-[55%] flex flex-col justify-between h-full text-left">
-        <div>
-          {/* Card glow effect */}
-          <div
-            className="absolute -top-12 -left-12 w-48 h-48 bg-sky-500/5 rounded-full blur-3xl pointer-events-none group-hover:bg-sky-500/10 transition-colors duration-700"
-          />
-
-          <h3 className="text-2xl lg:text-3xl font-black text-white mb-4 tracking-tight drop-shadow-[0_0_15px_rgba(14,165,233,0.25)]">
+        {/* Hover overlay with project info */}
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all duration-500 flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100">
+          <h3 className="text-xl md:text-2xl font-black text-white tracking-tight mb-2 uppercase">
             {project.name}
           </h3>
-          
-          <p className="text-sm text-sky-200/60 leading-relaxed mb-6 font-light line-clamp-3 lg:line-clamp-4">
+
+          <p className="text-xs text-white/50 leading-relaxed mb-4 line-clamp-2">
             {project.description}
           </p>
-        </div>
 
-        {/* Buttons */}
-        <div className="flex flex-wrap gap-4 mt-auto">
-          {project.github_url && (
-            <a
-              href={project.github_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/10 bg-white/5 text-xs text-white font-semibold transition-all duration-300 hover:bg-white/15 hover:border-white/20 hover:scale-105 active:scale-95 shadow-[0_4px_12px_rgba(0,0,0,0.2)]"
-            >
-              <FaGithub size={14} />
-              <span>GitHub</span>
-            </a>
-          )}
+          {/* Action links */}
+          <div className="flex items-center gap-4">
+            {project.github_url && (
+              <a
+                href={project.github_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-white/70 hover:text-white transition-colors duration-300"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <FaGithub size={14} />
+                <span>Code</span>
+              </a>
+            )}
 
-          {project.live_url && (
-            <a
-              href={project.live_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-sky-400/30 bg-sky-950/20 text-xs text-sky-200 font-semibold transition-all duration-300 hover:bg-sky-950/40 hover:border-sky-400/50 hover:scale-105 active:scale-95 shadow-[0_4px_15px_rgba(14,165,233,0.15)]"
-            >
-              <FaExternalLinkAlt size={12} />
-              <span>Live Demo</span>
-              <span className="text-[10px] transform group-hover:translate-x-0.5 transition-transform">→</span>
-            </a>
-          )}
+            {project.live_url && (
+              <a
+                href={project.live_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] hover:text-white transition-colors duration-300"
+                style={{ color: 'rgba(212,168,83,0.8)' }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <FaExternalLinkAlt size={11} />
+                <span>Live</span>
+              </a>
+            )}
+          </div>
         </div>
       </div>
     </div>
