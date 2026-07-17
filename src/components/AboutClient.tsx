@@ -66,7 +66,7 @@ export default function AboutClient({ data }: { data: AboutData }) {
               alt="Jaijith"
               fill
               priority
-              unoptimized
+              sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover grayscale hover:grayscale-0 transition-all duration-700"
             />
           </div>

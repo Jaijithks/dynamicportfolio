@@ -12,8 +12,8 @@ type Profile = {
 
 async function getAboutData(): Promise<{ about: About; profile: Profile }> {
   const [aboutRes, picRes] = await Promise.all([
-    fetch('https://my-api-6pmy.onrender.com/api/profile/about', { cache: 'no-store' }),
-    fetch('https://my-api-6pmy.onrender.com/api/profile/profilepic', { cache: 'no-store' }),
+    fetch('https://my-api-6pmy.onrender.com/api/profile/about', { next: { revalidate: 3600 } }),
+    fetch('https://my-api-6pmy.onrender.com/api/profile/profilepic', { next: { revalidate: 3600 } }),
   ]);
 
   if (!aboutRes.ok || !picRes.ok) {
