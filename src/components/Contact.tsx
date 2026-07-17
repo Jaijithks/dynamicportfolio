@@ -16,11 +16,16 @@ type Resume = {
   resume_url: string;
 };
 
+interface ContactProps {
+  initialContact?: Contact | null;
+  initialResume?: Resume | null;
+}
+
 /* ── Component ──────────────────────────────────────────────────────────── */
-export default function Contact() {
-  const [contact, setContact] = useState<Contact | null>(null);
-  const [resume, setResume] = useState<Resume | null>(null);
-  const [loadingResume, setLoadingResume] = useState(true);
+export default function Contact({ initialContact = null, initialResume = null }: ContactProps) {
+  const [contact, setContact] = useState<Contact | null>(initialContact);
+  const [resume, setResume] = useState<Resume | null>(initialResume);
+  const [loadingResume, setLoadingResume] = useState(initialResume ? false : true);
   const [copied, setCopied] = useState(false);
 
   const sectionRef = useRef<HTMLElement>(null);
@@ -39,23 +44,32 @@ export default function Contact() {
   }, []);
 
   useEffect(() => {
+    // If props were loaded successfully, do not fetch again
+    if (initialContact && initialResume) {
+      return;
+    }
+
     Promise.all([
-      fetch('https://my-api-6pmy.onrender.com/api/book/viewcontact', { cache: 'no-store' })
-        .then((r) => r.json())
-        .then((data) => setContact(data.currentContact))
-        .catch(console.error),
-      fetch('https://my-api-6pmy.onrender.com/api/profile/resume', { cache: 'no-store' })
-        .then((r) => r.json())
-        .then((data) => {
-          setResume(data.data.resume);
-          setLoadingResume(false);
-        })
-        .catch((err) => {
-          console.error(err);
-          setLoadingResume(false);
-        })
+      !contact
+        ? fetch('https://my-api-6pmy.onrender.com/api/book/viewcontact')
+            .then((r) => r.json())
+            .then((data) => setContact(data.currentContact))
+            .catch(console.error)
+        : Promise.resolve(),
+      !resume
+        ? fetch('https://my-api-6pmy.onrender.com/api/profile/resume')
+            .then((r) => r.json())
+            .then((data) => {
+              setResume(data.data.resume);
+              setLoadingResume(false);
+            })
+            .catch((err) => {
+              console.error(err);
+              setLoadingResume(false);
+            })
+        : Promise.resolve()
     ]);
-  }, []);
+  }, [contact, resume, initialContact, initialResume]);
 
   const handleCopy = () => {
     const email = contact?.email || 'jajithks01@gmail.com';

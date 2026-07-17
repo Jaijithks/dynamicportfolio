@@ -8,7 +8,7 @@ type Skill = {
 
 async function getSkills(): Promise<Skill[]> {
     const response = await fetch("https://my-api-6pmy.onrender.com/api/profile/skill", {
-        cache: "no-store",
+        next: { revalidate: 3600 },
     });
 
     if (!response.ok) {

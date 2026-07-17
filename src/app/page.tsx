@@ -6,7 +6,35 @@ import Skills from "@/components/Skills";
 import Bookme from "@/components/Bookme";
 import Contact from "@/components/Contact";
 
-export default function Home() {
+async function getContactData() {
+  try {
+    const [contactRes, resumeRes] = await Promise.all([
+      fetch('https://my-api-6pmy.onrender.com/api/book/viewcontact', { next: { revalidate: 3600 } }),
+      fetch('https://my-api-6pmy.onrender.com/api/profile/resume', { next: { revalidate: 3600 } }),
+    ]);
+
+    if (!contactRes.ok || !resumeRes.ok) {
+      return { contact: null, resume: null };
+    }
+
+    const [contactData, resumeData] = await Promise.all([
+      contactRes.json(),
+      resumeRes.json(),
+    ]);
+
+    return {
+      contact: contactData.currentContact || null,
+      resume: resumeData.data.resume || null,
+    };
+  } catch (err) {
+    console.error("Failed to fetch contact/resume data statically:", err);
+    return { contact: null, resume: null };
+  }
+}
+
+export default async function Home() {
+  const { contact, resume } = await getContactData();
+
   return (
     <main>
       <Hero />
@@ -31,7 +59,7 @@ export default function Home() {
         <Skills />
       </Suspense>
       <Bookme />
-      <Contact />
+      <Contact initialContact={contact} initialResume={resume} />
     </main>
   );
 }

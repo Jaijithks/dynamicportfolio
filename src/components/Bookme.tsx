@@ -74,7 +74,7 @@ export default function Bookme() {
     }
   };
 
-  const inputClasses = "w-full px-0 py-4 bg-transparent text-sm text-white border-b focus:outline-none transition-colors duration-300 placeholder-white/15 focus:border-[rgba(212,168,83,0.4)]";
+  const inputClasses = "w-full px-0 py-4 bg-transparent text-base md:text-sm text-white border-b focus:outline-none transition-colors duration-300 placeholder-white/15 focus:border-[rgba(212,168,83,0.4)]";
 
   return (
     <section
@@ -124,7 +124,7 @@ export default function Bookme() {
                   required
                   value={service}
                   onChange={(e) => setService(e.target.value)}
-                  className={`${inputClasses} appearance-none cursor-pointer`}
+                  className={`${inputClasses} appearance-none cursor-pointer pr-8`}
                   style={{ borderColor: 'rgba(255,255,255,0.06)' }}
                 >
                   <option value="" disabled>Select a service</option>
@@ -134,6 +134,7 @@ export default function Bookme() {
                     </option>
                   ))}
                 </select>
+                <span className="absolute right-2 bottom-4 pointer-events-none text-white/30 text-[10px]">▼</span>
               </div>
 
               {/* Timeline */}
@@ -145,7 +146,7 @@ export default function Bookme() {
                   required
                   value={expectedTime}
                   onChange={(e) => setExpectedTime(e.target.value)}
-                  className={`${inputClasses} appearance-none cursor-pointer`}
+                  className={`${inputClasses} appearance-none cursor-pointer pr-8`}
                   style={{ borderColor: 'rgba(255,255,255,0.06)' }}
                 >
                   <option value="" disabled>Select timeline</option>
@@ -155,6 +156,7 @@ export default function Bookme() {
                     </option>
                   ))}
                 </select>
+                <span className="absolute right-2 bottom-4 pointer-events-none text-white/30 text-[10px]">▼</span>
               </div>
 
               {/* Meeting Time */}

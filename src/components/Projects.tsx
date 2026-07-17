@@ -11,7 +11,7 @@ type Project = {
 
 async function getProjects(): Promise<Project[]> {
   const response = await fetch('https://my-api-6pmy.onrender.com/api/project/showProject', {
-    cache: 'no-store',
+    next: { revalidate: 3600 },
   });
 
   if (!response.ok) {
